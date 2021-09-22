@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare.videoservice.videoservice;
+package com.github.makewheels.videoshare.videoservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

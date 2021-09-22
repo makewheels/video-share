@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare.videoservice.videoservice;
+package com.github.makewheels.videoshare.videoservice;
 
 import com.github.makewheels.universaluserservice.bean.User;
 import org.springframework.web.bind.annotation.PostMapping;
