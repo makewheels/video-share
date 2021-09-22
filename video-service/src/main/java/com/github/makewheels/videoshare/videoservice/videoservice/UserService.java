@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare;
+package com.github.makewheels.videoshare.videoservice.videoservice;
 
 import com.github.makewheels.universaluserservice.bean.User;
 import org.springframework.cloud.openfeign.FeignClient;

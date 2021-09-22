@@ -1,10 +1,10 @@
-package com.github.makewheels.videoshare;
+package com.github.makewheels.videoshare.videoservice.videoservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class VideoShareApplicationTests {
+class VideoServiceApplicationTests {
 
     @Test
     void contextLoads() {

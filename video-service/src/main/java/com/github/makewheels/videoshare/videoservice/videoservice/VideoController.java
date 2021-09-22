@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare;
+package com.github.makewheels.videoshare.videoservice.videoservice;
 
 import com.github.makewheels.universaluserservice.bean.User;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,9 +15,7 @@ public class VideoController {
 
     @PostMapping("getUser")
     public User getUser() {
-        System.out.println("VideoController.getUser");
         User user = userService.getUserBySnowflakeId(1440303515921682432L);
-        System.out.println(user);
         return user;
     }
 }

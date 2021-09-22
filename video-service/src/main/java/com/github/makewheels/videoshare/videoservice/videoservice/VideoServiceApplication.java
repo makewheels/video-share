@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare;
+package com.github.makewheels.videoshare.videoservice.videoservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,10 +13,10 @@ import org.springframework.context.annotation.ComponentScan;
         "com.github.makewheels.universaluserservice"
 })
 @SpringBootApplication
-public class VideoShareApplication {
+public class VideoServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(VideoShareApplication.class, args);
+        SpringApplication.run(VideoServiceApplication.class, args);
     }
 
 }
