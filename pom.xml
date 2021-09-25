@@ -17,6 +17,8 @@
     <modules>
         <module>common</module>
         <module>video-service</module>
+        <module>file-service</module>
+        <module>transcoding-service</module>
     </modules>
 
     <properties>

@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare.fileservice;
+package com.github.makewheels.videoshare.transcoding.transcodingservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,10 +13,10 @@ import org.springframework.context.annotation.ComponentScan;
         "com.github.makewheels.universaluserservice"
 })
 @SpringBootApplication
-public class FileServiceApplication {
+public class TranscodingServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(FileServiceApplication.class, args);
+        SpringApplication.run(TranscodingServiceApplication.class, args);
     }
 
 }
