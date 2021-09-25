@@ -18,7 +18,7 @@
         <module>common</module>
         <module>video-service</module>
         <module>file-service</module>
-        <module>transcoding-service</module>
+        <module>transcode-service</module>
     </modules>
 
     <properties>
@@ -48,6 +48,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-spring-boot-starter</artifactId>
@@ -61,16 +62,17 @@
             </dependency>
 
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>1.2.75</version>
-            </dependency>
-            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.18</version>
                 <optional>true</optional>
             </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.75</version>
+            </dependency>
+
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
@@ -98,6 +100,19 @@
                 <artifactId>commons-codec</artifactId>
                 <version>1.15</version>
             </dependency>
+
+            <!--阿里云-->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-core</artifactId>
+                <version>4.5.25</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-mts</artifactId>
+                <version>3.3.31</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
