@@ -1,10 +1,10 @@
-package com.github.makewheels.videoshare.transcoding.transcodingservice;
+package com.github.makewheels.videoshare.transcodeservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TranscodingServiceApplicationTests {
+class TranscodeServiceApplicationTests {
 
     @Test
     void contextLoads() {
