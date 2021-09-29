@@ -19,6 +19,7 @@
         <module>video-service</module>
         <module>file-service</module>
         <module>transcode-service</module>
+        <module>api-gateway</module>
     </modules>
 
     <properties>
