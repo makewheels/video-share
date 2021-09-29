@@ -8,14 +8,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-@Component
 @Slf4j
+@Component
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        System.out.println(System.currentTimeMillis());
-        System.out.println(exchange.getRequest().getHeaders());
-//        exchange.getResponse().setComplete()
+        log.info("custom global filter");
         return chain.filter(exchange);
     }
 
