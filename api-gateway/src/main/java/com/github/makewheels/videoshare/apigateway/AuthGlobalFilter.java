@@ -1,7 +1,5 @@
 package com.github.makewheels.videoshare.apigateway;
 
-import com.github.makewheels.universaluserservice.response.ErrorCode;
-import com.github.makewheels.universaluserservice.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;

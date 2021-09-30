@@ -47,7 +47,7 @@
 
         <dependency>
             <groupId>com.github.makewheels</groupId>
-            <artifactId>universal-user-service</artifactId>
+            <artifactId>universal-user-service-common</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

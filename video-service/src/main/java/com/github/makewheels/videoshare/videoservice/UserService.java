@@ -1,6 +1,6 @@
 package com.github.makewheels.videoshare.videoservice;
 
-import com.github.makewheels.universaluserservice.bean.User;
+import com.github.makewheels.universaluserservice.common.bean.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
