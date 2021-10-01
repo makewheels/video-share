@@ -8,6 +8,10 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.github.makewheels.videoshare.common.bean.Video;
+import com.github.makewheels.videoshare.common.redis.RedisService;
+import com.github.makewheels.videoshare.common.response.ErrorCode;
+import com.github.makewheels.videoshare.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,8 +25,16 @@ public class FileService {
     private FileRepository fileRepository;
     @Value("${aliyun.oss.bucketName}")
     private String bucketName;
+    @Resource
+    private FileRedisService fileRedisService;
 
-    public Credential getTemporaryCredential() {
+    public Result<Credential> getTemporaryCredential(String uploadToken) {
+        Video video = fileRedisService.getVideoByUploadToken(uploadToken);
+        if (video == null) {
+            return Result.error(ErrorCode.FAIL);
+        }
+        String uploadPath = video.getUploadPath();
+
         String endpoint = "sts.cn-beijing.aliyuncs.com";
         String AccessKeyId = "LTAI5tJ9scBXxsk4VjYDiupv";
         String accessKeySecret = "THckQsWudA7rNV0hUXn2Hcxu0VHhLC";
@@ -40,7 +52,7 @@ public class FileService {
                 "                \"oss:PutObject\"" +
                 "            ], " +
                 "            \"Resource\": [" +
-                "                \"acs:oss:*:*:video-share-bucket/*\" " +
+                "                \"acs:oss:*:*:video-share-bucket/" + uploadPath + "\" " +
                 "            ], " +
                 "            \"Effect\": \"Allow\"" +
                 "        }" +
@@ -69,7 +81,7 @@ public class FileService {
             credential.setRegion(regionId);
             credential.setSecurityToken(credentials.getSecurityToken());
             log.info("生成临时凭证: " + JSON.toJSONString(credential));
-            return credential;
+            return Result.ok(credential);
         } catch (ClientException e) {
             e.printStackTrace();
         }

@@ -5,18 +5,8 @@
     <title>上传视频</title>
     <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
 
-    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
-          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-
-    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css"
-          integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
-
-    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
-            integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
-            crossorigin="anonymous"></script>
+    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>-->
+    <!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>-->
 
     <!-- 引入 layui.css -->
     <link rel="stylesheet" href="//unpkg.com/layui@2.6.8/dist/css/layui.css">
@@ -34,9 +24,35 @@
 
 <body>
 
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-    <legend>拖拽上传</legend>
-</fieldset>
+<form class="layui-form">
+
+    <input type="file" id="file"/>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">Title</label>
+        <div class="layui-input-block">
+            <input id="input_title" type="text" name="title" lay-verify="title" autocomplete="off"
+                   placeholder="请输入标题" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Description</label>
+        <div class="layui-input-block">
+            <input id="input_description" type="text" name="description" lay-verify="required"
+                   placeholder="请输入描述" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Visibility</label>
+        <div class="layui-input-block">
+            <input type="radio" name="visibility" value="Public" title="Public" checked=""/>
+            <input type="radio" name="visibility" value="Unlisted" title="Unlisted">
+            <input type="radio" name="visibility" value="Private" title="Private">
+        </div>
+    </div>
+</form>
+
+<button id="btn_upload" type="button" class="layui-btn">开始上传</button>
 
 <script>
     //首先发请求到视频微服务新建视频
@@ -44,35 +60,39 @@
     //上传阿里云对象存储
     //通知文件微服务上传完成
 
-    const client = new OSS({
-        region: 'yourRegion',
-        accessKeyId: 'yourAccessKeyId',
-        accessKeySecret: 'yourAccessKeySecret',
-        stsToken: 'yourSecurityToken',
-        bucket: 'examplebucket'
-    });
-
-    // 从输入框获取file对象，例如<input type="file" id="file" />。
+    // 从输入框获取file对象，例如 <input type="file" id="file" />
     const data = document.getElementById('file').files[0];
-    // 创建并填写Blob数据。
-    //const data = new Blob('Hello OSS');
-    // 创建并填写OSS Buffer内容。
-    //const data = new OSS.Buffer('Hello OSS');
 
     async function putObject() {
-        try {
-            // 填写Object完整路径。Object完整路径中不能包含Bucket名称。
-            // 您可以通过自定义文件名（例如exampleobject.txt）或文件完整路径
-            // （例如exampledir/exampleobject.txt）的形式实现将数据上传到当前Bucket或Bucket中的指定目录。
-            // data对象可以自定义为file对象、Blob数据或者OSS Buffer。
-            const result = await client.put('exampledir/exampleobject.txt', data);
-            console.log(result);
-        } catch (e) {
-            console.log(e);
-        }
+        const client = new OSS({
+            region: 'yourRegion',
+            accessKeyId: 'yourAccessKeyId',
+            accessKeySecret: 'yourAccessKeySecret',
+            stsToken: 'yourSecurityToken',
+            bucket: 'examplebucket'
+        });
+        const result = await client.put('exampledir/exampleobject.txt', data);
+        console.log(result);
     }
 
-    putObject();
+    document.getElementById("btn_upload").addEventListener('click', function () {
+        axios.post(APIURL + "/universal-user-service/user/login",
+            {username: username, password: password})
+            .then(function (response) {
+                var data = response.data;
+                if (data.code !== 0) {
+                    //登陆失败
+                    alert(data.message);
+                } else {
+                    //登陆成功
+                    //保存loginToken
+                    localStorage.setItem("loginToken", data.data.loginToken);
+                    //跳转网页
+                    location.href = "/loginSuccess";
+                }
+            });
+    });
+
 </script>
 
 </body>

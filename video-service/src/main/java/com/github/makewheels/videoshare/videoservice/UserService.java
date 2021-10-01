@@ -9,20 +9,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface UserService {
     /**
      * 创建空用户
-     *
-     * @param appId
-     * @return
      */
     @PostMapping("user/createEmpty")
     User createUser(@RequestParam String appId);
 
     /**
      * 创建用户：根据用户名密码
-     *
-     * @param appId
-     * @param username
-     * @param password
-     * @return
      */
     @PostMapping("user/createByUsernameAndPassword")
     User createUser(@RequestParam String appId, @RequestParam String username,
@@ -30,19 +22,16 @@ public interface UserService {
 
     /**
      * 通过mongo id获取用户
-     *
-     * @param mongoId
-     * @return
      */
     @PostMapping("user/getUserByMongoId")
     User getUserByMongoId(@RequestParam String mongoId);
 
     /**
      * 通过雪花id获取用户
-     *
-     * @param snowflakeId
-     * @return
      */
     @PostMapping("user/getUserBySnowflakeId")
     User getUserBySnowflakeId(@RequestParam long snowflakeId);
+
+    @PostMapping("user/getByLoginToken")
+    User getByLoginToken(@RequestParam String loginToken);
 }
