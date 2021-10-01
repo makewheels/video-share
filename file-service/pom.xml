@@ -46,9 +46,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.makewheels</groupId>
-            <artifactId>universal-user-service-common</artifactId>
-            <version>1.0.0</version>
+            <groupId>com.github.makewheels.universal-user-service</groupId>
+            <artifactId>common</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.makewheels.videoshare</groupId>

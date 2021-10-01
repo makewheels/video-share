@@ -13,7 +13,7 @@ public interface UserService {
      * @param appId
      * @return
      */
-    @PostMapping("createEmpty")
+    @PostMapping("user/createEmpty")
     User createUser(@RequestParam String appId);
 
     /**
@@ -24,7 +24,7 @@ public interface UserService {
      * @param password
      * @return
      */
-    @PostMapping("createByUsernameAndPassword")
+    @PostMapping("user/createByUsernameAndPassword")
     User createUser(@RequestParam String appId, @RequestParam String username,
                     @RequestParam String password);
 
@@ -34,7 +34,7 @@ public interface UserService {
      * @param mongoId
      * @return
      */
-    @PostMapping("getUserByMongoId")
+    @PostMapping("user/getUserByMongoId")
     User getUserByMongoId(@RequestParam String mongoId);
 
     /**

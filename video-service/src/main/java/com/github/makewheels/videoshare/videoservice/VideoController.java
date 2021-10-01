@@ -15,7 +15,6 @@ public class VideoController {
 
     @PostMapping("getUser")
     public User getUser() {
-        User user = userService.getUserBySnowflakeId(1443083550025977856L);
-        return user;
+        return userService.getUserBySnowflakeId(1443616374344781824L);
     }
 }

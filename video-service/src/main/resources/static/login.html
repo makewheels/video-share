@@ -51,12 +51,23 @@
     layui.$('#btn-login').on('click', function () {
         var data = form.val('example');
         var username = data.username;
-        var password = data.username;
-        axios.post("https://autumnfish.cn/api/user/reg",
+        var password = data.password;
+        axios.post("http://localhost:5018/universal-user-service/user/login",
             {username: username, password: password})
             .then(function (response) {
-                console.log(response);
+                var data = response.data;
+                if (data.code !== 0) {
+                    //登陆失败
+                    alert(data.message);
+                } else {
+                    //登陆成功
+                    //保存loginToken
+                    localStorage.setItem("loginToken",data.data.loginToken);
+                    //跳转网页
+                    location.href="/loginSuccess";
+                }
             });
+        // window.localStorage.setItem("loginToken");
     });
 </script>
 </body>

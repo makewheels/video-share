@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableFeignClients
 @EnableDiscoveryClient
 @ComponentScan(basePackages = {
-        "com.github.makewheels.videoshare.common",
+        "com.github.makewheels.videoshare",
         "com.github.makewheels.universaluserservice"
 })
 @SpringBootApplication

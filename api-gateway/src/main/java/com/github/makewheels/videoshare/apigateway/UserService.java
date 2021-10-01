@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient("universal-user-service")
 public interface UserService {
-    @PostMapping("authLoginToken")
+    @PostMapping("/user/authLoginToken")
     Boolean authLoginToken(@RequestParam String loginToken);
 }

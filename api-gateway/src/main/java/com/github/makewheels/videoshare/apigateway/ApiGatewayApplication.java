@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 })
 @EnableDiscoveryClient
 @EnableFeignClients
-@SpringBootApplication()
+@SpringBootApplication
 public class ApiGatewayApplication {
 
     public static void main(String[] args) {
