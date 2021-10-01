@@ -24,26 +24,29 @@
     <script src="//unpkg.com/layui@2.6.8/dist/layui.js"></script>
 
     <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!--引入的自己的common.js-->
+    <script src="js/common.js"></script>
 </head>
 
 <body>
 <form class="layui-form" action="" lay-filter="example">
     <div style="width: 600px;margin-top: 50px;margin-left: 30px;">
         <div class="layui-form-item">
-            <label class="layui-form-label">输入框</label>
+            <label class="layui-form-label">username</label>
             <div class="layui-input-block">
-                <input type="text" name="username" lay-verify="title" autocomplete="off" placeholder="请输入标题"
+                <input type="text" name="username" lay-verify="title" autocomplete="off" placeholder="input here"
                        class="layui-input" id="input-login">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">密码框</label>
+            <label class="layui-form-label">password</label>
             <div class="layui-input-block">
-                <input type="password" name="password" placeholder="请输入密码" autocomplete="off"
+                <input type="password" name="password" placeholder="input here" autocomplete="off"
                        class="layui-input" id="input-password">
             </div>
         </div>
-        <button type="button" class="layui-btn layui-btn-normal" id="btn-login">百搭按钮</button>
+        <button style="margin-left: 50px" type="button" class="layui-btn layui-btn-normal" id="btn-login">走</button>
     </div>
 </form>
 <script>
@@ -52,7 +55,7 @@
         var data = form.val('example');
         var username = data.username;
         var password = data.password;
-        axios.post("http://localhost:5018/universal-user-service/user/login",
+        axios.post(APIURL + "/universal-user-service/user/login",
             {username: username, password: password})
             .then(function (response) {
                 var data = response.data;
@@ -62,12 +65,11 @@
                 } else {
                     //登陆成功
                     //保存loginToken
-                    localStorage.setItem("loginToken",data.data.loginToken);
+                    localStorage.setItem("loginToken", data.data.loginToken);
                     //跳转网页
-                    location.href="/loginSuccess";
+                    location.href = "/loginSuccess";
                 }
             });
-        // window.localStorage.setItem("loginToken");
     });
 </script>
 </body>

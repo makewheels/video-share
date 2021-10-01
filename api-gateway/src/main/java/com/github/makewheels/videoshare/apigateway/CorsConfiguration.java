@@ -27,7 +27,8 @@ public class CorsConfiguration {
                         "POST, GET, PUT, OPTIONS, DELETE, PATCH");
                 headers.add("Access-Control-Max-Age", "3600");
                 headers.add("Access-Control-Allow-Headers",
-                        "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+//                        "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+                        "*");
                 headers.add("Access-Control-Expose-Headers", "Location");
                 headers.add("Access-Control-Allow-Credentials", "true");
                 if (request.getMethod() == HttpMethod.OPTIONS) {
