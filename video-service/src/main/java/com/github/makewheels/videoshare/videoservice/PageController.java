@@ -14,4 +14,9 @@ public class PageController {
     public String onLoginSuccess() {
         return "redirect:/home.html";
     }
+
+    @RequestMapping("uploadFinish")
+    public String uploadFinish() {
+        return "redirect:/home.html";
+    }
 }

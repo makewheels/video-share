@@ -1,6 +1,7 @@
 package com.github.makewheels.videoshare.videoservice;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.github.makewheels.universaluserservice.common.bean.User;
 import com.github.makewheels.videoshare.common.response.Result;
 import com.github.makewheels.videoshare.videoservice.bean.CreateVideoRequest;
@@ -31,7 +32,7 @@ public class VideoService {
     public Result<CreateVideoResponse> createVideo(User user, CreateVideoRequest request) {
         //创建视频
         Video video = new Video();
-        video.setVideoId(IdUtil.nanoId(11));
+        video.setVideoId(RandomUtil.randomString(11));
         video.setSnowflakeId(VideoSnowflakeUtil.get());
 
         video.setUserMongoId(user.getMongoId());
@@ -42,7 +43,7 @@ public class VideoService {
         video.setStatus(VideoConstants.STATUS_CREATE);
 
         //上传路径
-        String uploadPath = "upload/" + user.getSnowflakeId() + "/" + video.getSnowflakeId()
+        String uploadPath = "upload/video/" + user.getSnowflakeId() + "/" + video.getSnowflakeId()
                 + "." + FilenameUtils.getExtension(request.getOriginalFilename());
         video.setUploadPath(uploadPath);
 

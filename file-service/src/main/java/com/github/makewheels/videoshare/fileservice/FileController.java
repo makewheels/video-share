@@ -1,9 +1,10 @@
 package com.github.makewheels.videoshare.fileservice;
 
 import com.github.makewheels.videoshare.common.response.Result;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.github.makewheels.videoshare.fileservice.bean.GetTemporaryCredentialRequest;
+import com.github.makewheels.videoshare.fileservice.bean.UploadFinishRequest;
+import com.github.makewheels.videoshare.fileservice.upload.Credential;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -13,9 +14,16 @@ public class FileController {
     @Resource
     FileService fileService;
 
-    @GetMapping("getTemporaryCredential")
-    public Result<Credential> getTemporaryCredential(String uploadToken) {
-        return fileService.getTemporaryCredential(uploadToken);
+    @PostMapping("getTemporaryCredential")
+    public Result<Credential> getTemporaryCredential(
+            @RequestBody GetTemporaryCredentialRequest getTemporaryCredentialRequest) {
+        return fileService.getTemporaryCredential(getTemporaryCredentialRequest.getUploadToken(),
+                getTemporaryCredentialRequest.getOriginalFilename());
+    }
+
+    @PostMapping("uploadFinish")
+    public Result<Void> uploadFinish(@RequestBody UploadFinishRequest uploadFinishRequest) {
+        return fileService.uploadFinish(uploadFinishRequest.getFileSnowflakeId());
     }
 
 }

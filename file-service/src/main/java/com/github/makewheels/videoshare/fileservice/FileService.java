@@ -1,90 +1,88 @@
 package com.github.makewheels.videoshare.fileservice;
 
 import com.alibaba.fastjson.JSON;
-import com.aliyuncs.DefaultAcsClient;
-import com.aliyuncs.auth.sts.AssumeRoleRequest;
-import com.aliyuncs.auth.sts.AssumeRoleResponse;
-import com.aliyuncs.exceptions.ClientException;
-import com.aliyuncs.http.MethodType;
-import com.aliyuncs.profile.DefaultProfile;
-import com.aliyuncs.profile.IClientProfile;
+import com.aliyun.oss.model.OSSObject;
+import com.aliyun.oss.model.ObjectMetadata;
+import com.github.makewheels.videoshare.common.bean.OssFile;
 import com.github.makewheels.videoshare.common.bean.Video;
-import com.github.makewheels.videoshare.common.redis.RedisService;
 import com.github.makewheels.videoshare.common.response.ErrorCode;
 import com.github.makewheels.videoshare.common.response.Result;
+import com.github.makewheels.videoshare.fileservice.oss.OssService;
+import com.github.makewheels.videoshare.fileservice.redis.FileRedisService;
+import com.github.makewheels.videoshare.fileservice.upload.Credential;
+import com.github.makewheels.videoshare.fileservice.util.FileSnowflakeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 @Service
 @Slf4j
 public class FileService {
     @Resource
     private FileRepository fileRepository;
-    @Value("${aliyun.oss.bucketName}")
-    private String bucketName;
+
     @Resource
     private FileRedisService fileRedisService;
+    @Resource
+    private MongoTemplate mongoTemplate;
+    @Resource
+    private OssService ossService;
 
-    public Result<Credential> getTemporaryCredential(String uploadToken) {
+    public Result<Credential> getTemporaryCredential(String uploadToken, String originalFilename) {
         Video video = fileRedisService.getVideoByUploadToken(uploadToken);
+        //删掉Redis uploadToken
+        fileRedisService.deleteUploadToken(uploadToken);
         if (video == null) {
-            return Result.error(ErrorCode.FAIL);
+            return Result.error(ErrorCode.UPLOAD_TOKEN_EXPIRED);
         }
         String uploadPath = video.getUploadPath();
+        //创建我本地文件
+        OssFile ossFile = new OssFile();
+        ossFile.setStatus("create");
+        ossFile.setUserMongoId(video.getUserMongoId());
+        ossFile.setVideoMongoId(video.getMongoId());
+        ossFile.setOriginalFilename(originalFilename);
+        ossFile.setCreateTime(new Date());
+        ossFile.setUploadToken(uploadToken);
+        ossFile.setProvider("aliyun-oss");
 
-        String endpoint = "sts.cn-beijing.aliyuncs.com";
-        String AccessKeyId = "LTAI5tJ9scBXxsk4VjYDiupv";
-        String accessKeySecret = "THckQsWudA7rNV0hUXn2Hcxu0VHhLC";
-        String roleArn = "acs:ram::1618784280874658:role/aliyunosstokengeneratorrole";
-        // 自定义角色会话名称，用来区分不同的令牌，例如可填写为SessionTest。
-        String roleSessionName = "RoleSessionName";
-        // 以下Policy用于限制仅允许使用临时访问凭证向目标存储空间examplebucket上传文件。
-        // 临时访问凭证最后获得的权限是步骤4设置的角色权限和该Policy设置权限的交集，
-        // 即仅允许将文件上传至目标存储空间examplebucket下的exampledir目录。
-        String policy = "{" +
-                "    \"Version\": \"1\", " +
-                "    \"Statement\": [" +
-                "        {" +
-                "            \"Action\": [" +
-                "                \"oss:PutObject\"" +
-                "            ], " +
-                "            \"Resource\": [" +
-                "                \"acs:oss:*:*:video-share-bucket/" + uploadPath + "\" " +
-                "            ], " +
-                "            \"Effect\": \"Allow\"" +
-                "        }" +
-                "    ]" +
-                "}";
-        try {
-            String regionId = "cn-beijing";
-            // 添加endpoint。
-            DefaultProfile.addEndpoint(regionId, "Sts", endpoint);
-            // 构造default profile。
-            IClientProfile profile = DefaultProfile.getProfile(regionId, AccessKeyId, accessKeySecret);
-            // 构造client。
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            final AssumeRoleRequest request = new AssumeRoleRequest();
-            request.setSysMethod(MethodType.POST);
-            request.setRoleArn(roleArn);
-            request.setRoleSessionName(roleSessionName);
-            request.setPolicy(policy); // 如果policy为空，则用户将获得该角色下所有权限。
-            request.setDurationSeconds(3600L); // 设置临时访问凭证的有效时间为3600秒。
-            AssumeRoleResponse response = client.getAcsResponse(request);
-            Credential credential = new Credential();
-            AssumeRoleResponse.Credentials credentials = response.getCredentials();
-            credential.setAccessKeyId(credentials.getAccessKeyId());
-            credential.setAccessKeySecret(credentials.getAccessKeySecret());
-            credential.setBucket(bucketName);
-            credential.setRegion(regionId);
-            credential.setSecurityToken(credentials.getSecurityToken());
-            log.info("生成临时凭证: " + JSON.toJSONString(credential));
-            return Result.ok(credential);
-        } catch (ClientException e) {
-            e.printStackTrace();
-        }
-        return null;
+        long fileSnowflakeId = FileSnowflakeUtil.get();
+
+        ossFile.setSnowflakeId(fileSnowflakeId);
+        ossFile.setBucket(ossService.getBucket());
+        ossFile.setRegion(ossService.getRegion());
+        ossFile.setKey(uploadPath);
+        ossFile.setBaseUrl(ossService.getBaseUrl());
+        ossFile.setAccessUrl(ossService.getAccessUrl(uploadPath));
+        mongoTemplate.save(ossFile);
+        //生成阿里云上传凭证
+        Credential credential = ossService.getAliyunOssUploadCredential(uploadPath);
+        credential.setFileSnowflakeId(fileSnowflakeId + "");
+        return Result.ok(credential);
+    }
+
+    public Result<Void> uploadFinish(long fileSnowflakeId) {
+        //查数据库拿到文件
+        OssFile ossFile = fileRepository.findBySnowflakeId(fileSnowflakeId);
+        //向阿里云查询文件信息
+        String key = ossFile.getKey();
+        OSSObject ossObject = ossService.getFileByKey(key);
+        ObjectMetadata objectMetadata = ossObject.getObjectMetadata();
+        String md5 = objectMetadata.getETag().toLowerCase();
+        Date lastModified = objectMetadata.getLastModified();
+        //修改文件信息
+        ossFile.setMd5(md5);
+        ossFile.setSize(objectMetadata.getContentLength());
+        ossFile.setUploadFinishTime(lastModified);
+        ossFile.setStatus("upload-finish");
+        mongoTemplate.save(ossFile);
+        //发送消息队列，上传完成
+
+        //返回前端
+        return Result.ok();
     }
 }

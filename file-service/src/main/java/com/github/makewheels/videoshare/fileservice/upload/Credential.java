@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare.fileservice;
+package com.github.makewheels.videoshare.fileservice.upload;
 
 import lombok.Data;
 
@@ -9,4 +9,6 @@ public class Credential {
     private String accessKeyId;
     private String accessKeySecret;
     private String securityToken;
+
+    private String fileSnowflakeId;
 }

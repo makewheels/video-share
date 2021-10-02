@@ -24,7 +24,7 @@
 
 <body>
 
-<form class="layui-form">
+<form class="layui-form" lay-filter="form">
 
     <input type="file" id="file"/>
 
@@ -55,42 +55,96 @@
 <button id="btn_upload" type="button" class="layui-btn">开始上传</button>
 
 <script>
-    //首先发请求到视频微服务新建视频
-    //向文件服务发请求获取阿里云对象存储令牌
-    //上传阿里云对象存储
-    //通知文件微服务上传完成
+    //创建视频
+    function createVideo() {
+        //拿到表单中的参数
+        var title = document.getElementById("input_title").value;
+        var description = document.getElementById("input_description").value;
+        var visibility = layui.form.val('form').visibility;
+        var file = document.getElementById('file').files[0];
+        var originalFilename = file.name;
 
-    // 从输入框获取file对象，例如 <input type="file" id="file" />
-    const data = document.getElementById('file').files[0];
-
-    async function putObject() {
-        const client = new OSS({
-            region: 'yourRegion',
-            accessKeyId: 'yourAccessKeyId',
-            accessKeySecret: 'yourAccessKeySecret',
-            stsToken: 'yourSecurityToken',
-            bucket: 'examplebucket'
+        axios.post(APIURL + "/video-service/video/createVideo",
+            {
+                title: title,
+                description: description,
+                visibility: visibility,
+                originalFilename: originalFilename
+            }
+        ).then(function (response) {
+            var data = response.data;
+            if (data.code === 0) {
+                getCredential(data.data);
+            } else {
+                alert(data.message);
+            }
         });
-        const result = await client.put('exampledir/exampleobject.txt', data);
-        console.log(result);
+    }
+
+    //获取上传对象存储的凭证
+    function getCredential(data) {
+        var uploadPath = data.uploadPath;
+        var uploadToken = data.uploadToken;
+        var originalFilename = document.getElementById('file').files[0].name;
+        axios.post(APIURL + "/file-service/file/getTemporaryCredential",
+            {
+                uploadToken: uploadToken,
+                originalFilename: originalFilename
+            }
+        ).then(function (response) {
+            var body = response.data;
+            if (body.code === 0) {
+                var realData = body.data;
+                var accessKeyId = realData.accessKeyId;
+                var accessKeySecret = realData.accessKeySecret;
+                var bucket = realData.bucket;
+                var fileSnowflakeId = realData.fileSnowflakeId;
+                var region = realData.region;
+                var securityToken = realData.securityToken;
+                putObject(region, accessKeyId, accessKeySecret, securityToken, bucket, uploadPath, fileSnowflakeId);
+            } else {
+                alert(body.message);
+            }
+        });
+    }
+
+    //上传阿里云对象存储
+    async function putObject(region, accessKeyId, accessKeySecret, stsToken, bucket, path, fileSnowflakeId) {
+        const data = document.getElementById('file').files[0];
+        const client = new OSS({
+            region: region,
+            accessKeyId: accessKeyId,
+            accessKeySecret: accessKeySecret,
+            stsToken: stsToken,
+            bucket: bucket
+        });
+        const result = await client.put(path, data);
+        console.log(JSON.stringify(result));
+        // {"name":"upload/video/1443616374344781824/1444172191220764672.jpg","url":"http://video-share-bucket.oss-cn-beijing.aliyuncs.com/upload/video/1443616374344781824/1444172191220764672.jpg","res":{"status":200,"statusCode":200,"headers":{"content-length":"0"},"size":0,"aborted":false,"rt":149,"keepAliveSocket":false,"data":{"type":"Buffer","data":[]},"requestUrls":["http://video-share-bucket.oss-cn-beijing.aliyuncs.com/upload/video/1443616374344781824/1444172191220764672.jpg"],"timing":null,"remoteAddress":"","remotePort":""}}
+        if (result.res.status === 200) {
+            onUploadFinish(fileSnowflakeId);
+        }
+    }
+
+    //当上传完成时
+    function onUploadFinish(fileSnowflakeId) {
+        axios.post(APIURL + "/file-service/file/uploadFinish",
+            {
+                fileSnowflakeId: fileSnowflakeId
+            }
+        ).then(function (response) {
+            var body = response.data;
+            if (body.code === 0) {
+                //跳转网页
+                location.href = "/uploadFinish";
+            } else {
+                alert(body.message);
+            }
+        });
     }
 
     document.getElementById("btn_upload").addEventListener('click', function () {
-        axios.post(APIURL + "/universal-user-service/user/login",
-            {username: username, password: password})
-            .then(function (response) {
-                var data = response.data;
-                if (data.code !== 0) {
-                    //登陆失败
-                    alert(data.message);
-                } else {
-                    //登陆成功
-                    //保存loginToken
-                    localStorage.setItem("loginToken", data.data.loginToken);
-                    //跳转网页
-                    location.href = "/loginSuccess";
-                }
-            });
+        createVideo();
     });
 
 </script>
