@@ -5,6 +5,8 @@ import com.github.makewheels.videoshare.common.bean.video.Video;
 import com.github.makewheels.videoshare.common.response.Result;
 import com.github.makewheels.videoshare.videoservice.bean.createvideo.CreateVideoRequest;
 import com.github.makewheels.videoshare.videoservice.bean.createvideo.CreateVideoResponse;
+import com.github.makewheels.videoshare.videoservice.bean.getvideolist.GetVideoListRequest;
+import com.github.makewheels.videoshare.videoservice.bean.getvideolist.GetVideoListResponse;
 import com.github.makewheels.videoshare.videoservice.bean.playurl.PlayUrl;
 import com.github.makewheels.videoshare.videoservice.bean.playurl.PlayUrlRequest;
 import com.github.makewheels.videoshare.videoservice.bean.videoinfo.VideoInfoRequest;
@@ -48,5 +50,12 @@ public class VideoController {
             HttpServletRequest request, @RequestBody PlayUrlRequest playUrlRequest) {
         User user = userService.getByLoginToken(request.getHeader("loginToken"));
         return videoService.getPlayUrl(user, Long.parseLong(playUrlRequest.getSnowflakeId()));
+    }
+
+    @PostMapping("getVideoList")
+    public Result<List<GetVideoListResponse>> getVideoList(
+            HttpServletRequest request, @RequestBody GetVideoListRequest getVideoListRequest) {
+        User user = userService.getByLoginToken(request.getHeader("loginToken"));
+        return videoService.getVideoList(user, getVideoListRequest);
     }
 }

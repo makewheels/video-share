@@ -23,30 +23,91 @@
 <a href="upload.html" target="_blank">
     <button type="button" class="layui-btn">上传视频</button>
 </a>
+<br>
 
-<table class="layui-hide" id="test"></table>
+<table lay-filter="demo">
+    <thead>
+    <tr>
+        <th lay-data="{width:120}">videoId</th>
+        <th lay-data="{width:200, sort:true}">title</th>
+        <th lay-data="{width:100, sort:true}">visibility</th>
+        <th lay-data="{width:200, sort:true}">expireTime</th>
+        <th lay-data="{width:200, sort:true}">createTime</th>
+        <th lay-data="{width:200, sort:true}">status</th>
+    </tr>
+    </thead>
+    <tbody id="tbody">
+    <tr>
+        <td>贤心3</td>
+        <td>33</td>
+        <td>人生就像是一场修行c</td>
+    </tr>
+    </tbody>
+</table>
 
 <script>
-    layui.use('table', function () {
-        var table = layui.table;
+    //判断日期是否是个位数
+    function getDateRestult(str) {
+        if (str < 10) {
+            return "0" + str;
+        } else {
+            return str;
+        }
+    }
 
-        table.render({
-            elem: '#test'
-            , url: '/demo/table/user/'
-            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
-            , cols: [[
-                {field: 'id', width: 80, title: 'ID', sort: true}
-                , {field: 'username', width: 80, title: '用户名'}
-                , {field: 'sex', width: 80, title: '性别', sort: true}
-                , {field: 'city', width: 80, title: '城市'}
-                , {field: 'sign', title: '签名', width: '30%', minWidth: 100} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
-                , {field: 'experience', title: '积分', sort: true}
-                , {field: 'score', title: '评分', sort: true}
-                , {field: 'classify', title: '职业'}
-                , {field: 'wealth', width: 137, title: '财富', sort: true}
-            ]]
+    //获得日期
+    function parseDateString(str) {
+        if (str != null) {
+            var time = new Date(parseInt(Date.parse(str)));
+            //年
+            var year = getDateRestult(time.getFullYear());
+            //月
+            var month = getDateRestult(time.getMonth() + 1);
+            //日
+            var day = getDateRestult(time.getDate());
+            //时
+            var hours = getDateRestult(time.getHours());
+            //分
+            var Minutes = getDateRestult(time.getMinutes());
+            //秒
+            var seconds = getDateRestult(time.getSeconds());
+
+            return year + "-" + month + "-" + day + " " + hours + ":" + Minutes + ":" + seconds;
+        }
+    }
+
+    axios.post(APIURL + "/video-service/video/getVideoList", {})
+        .then(function (response) {
+            var data = response.data;
+            if (data.code !== 0) {
+                alert(data.message);
+                return;
+            }
+            var realData = data.data;
+
+            var tbody = document.getElementById("tbody");
+            for (var i = 0; i < realData.length; i++) {
+                var each = realData[i];
+                var newTr = document.createElement('tr');
+                var expireTime = "";
+                if (each.hasExpireTime) {
+                    expireTime = parseDateString(each.expireTime);
+                }
+                newTr.innerHTML =
+                    '<td>' + each.videoId + '</td>' +
+                    '<td>' + each.title + '</td>' +
+                    '<td>' + each.visibility + '</td>' +
+                    '<td>' + expireTime + '</td>' +
+                    '<td>' + parseDateString(each.createTime) + '</td>' +
+                    '<td>' + each.status + '</td>'
+                ;
+                //把新的tr(newTr)加入到tbody中
+                tbody.appendChild(newTr);
+            }
+            //转换静态表格
+            layui.table.init('demo', {});
         });
-    });
+
 </script>
 
 </body>

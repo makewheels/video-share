@@ -10,6 +10,8 @@ import com.github.makewheels.videoshare.common.response.Result;
 import com.github.makewheels.videoshare.videoservice.bean.createvideo.CreateVideoRequest;
 import com.github.makewheels.videoshare.videoservice.bean.createvideo.CreateVideoResponse;
 import com.github.makewheels.videoshare.common.bean.video.Video;
+import com.github.makewheels.videoshare.videoservice.bean.getvideolist.GetVideoListRequest;
+import com.github.makewheels.videoshare.videoservice.bean.getvideolist.GetVideoListResponse;
 import com.github.makewheels.videoshare.videoservice.bean.playurl.PlayUrl;
 import com.github.makewheels.videoshare.videoservice.bean.videoinfo.VideoInfoResponse;
 import com.github.makewheels.videoshare.videoservice.redis.VideoRedisService;
@@ -181,5 +183,17 @@ public class VideoService {
             playUrls.add(playUrl);
         }
         return Result.ok(playUrls);
+    }
+
+    public Result<List<GetVideoListResponse>> getVideoList(User user, GetVideoListRequest getVideoListRequest) {
+        List<Video> videos = videoRepository.find("userMongoId", user.getMongoId());
+        List<GetVideoListResponse> list = new ArrayList<>(videos.size());
+        videos.forEach(video -> {
+            GetVideoListResponse videoInfo = new GetVideoListResponse();
+            BeanUtils.copyProperties(video, videoInfo);
+            videoInfo.setSnowflakeId(video.getSnowflakeId() + "");
+            list.add(videoInfo);
+        });
+        return Result.ok(list);
     }
 }
