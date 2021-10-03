@@ -150,11 +150,11 @@ public class VideoService {
      * 根据雪花id获取视频播放信息
      *
      * @param user
-     * @param videoSnowflakeId
+     * @param snowflakeId
      * @return
      */
-    public Result<List<PlayUrl>> getPlayUrl(User user, long videoSnowflakeId) {
-        Video video = videoRepository.getVideoBySnowflakeId(videoSnowflakeId);
+    public Result<List<PlayUrl>> getPlayUrl(User user, long snowflakeId) {
+        Video video = videoRepository.getVideoBySnowflakeId(snowflakeId);
         ErrorCode errorCode = checkVideo(user, video);
         if (errorCode != null) {
             return Result.error(errorCode);

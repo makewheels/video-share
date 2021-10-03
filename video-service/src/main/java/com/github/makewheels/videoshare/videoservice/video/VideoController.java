@@ -47,6 +47,6 @@ public class VideoController {
     public Result<List<PlayUrl>> getPlayUrl(
             HttpServletRequest request, @RequestBody PlayUrlRequest playUrlRequest) {
         User user = userService.getByLoginToken(request.getHeader("loginToken"));
-        return videoService.getPlayUrl(user, Long.parseLong(playUrlRequest.getVideoSnowflakeId()));
+        return videoService.getPlayUrl(user, Long.parseLong(playUrlRequest.getSnowflakeId()));
     }
 }

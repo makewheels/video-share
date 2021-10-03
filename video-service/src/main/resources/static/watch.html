@@ -28,6 +28,9 @@
 
 <body>
 <div class="prism-player" id="player-con"></div>
+<span id="text_title"></span>
+<br>
+<span id="text_description"></span>
 <script>
     function getQueryString(name) {
         let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
@@ -38,33 +41,66 @@
         return null;
     }
 
+    //获取视频信息
     function getVideoInfo(videoId) {
         axios.post(APIURL + "/video-service/video/getVideoInfoByVideoId",
-            {videoId: videoId})
-            .then(function (response) {
-                var data = response.data;
-                if (data.code !== 0) {
-                    //登陆失败
-                    alert(data.message);
-                    return null;
-                } else {
-                    return data.data;
-                }
-            });
+            {videoId: videoId}
+        ).then(function (response) {
+            var data = response.data;
+            if (data.code !== 0) {
+                alert(data.message);
+                return;
+            }
+            var realData = data.data;
+            //渲染视频title和description
+            document.getElementById("text_title").innerText = realData.title;
+            document.getElementById("text_description").innerText = realData.description;
+            getPlayUrl(realData);
+        });
     }
 
-    var videoId = getQueryString("v");
-    var videoInfo = getVideoInfo(videoId);
+    //获取播放地址
+    function getPlayUrl(videoInfo) {
+        axios.post(APIURL + "/video-service/video/getPlayUrl",
+            {snowflakeId: videoInfo.snowflakeId}
+        ).then(function (response) {
+            var data = response.data;
+            if (data.code !== 0) {
+                alert(data.message);
+                return;
+            }
+            var realData = data.data;
+            var HD;
+            var SD;
+            var LD;
+            for (var i = 0; i < realData.length; i++) {
+                var resolution = realData[i].resolution;
+                var url = realData[i].url;
+                if (resolution === "1080p") {
+                    HD = url;
+                } else if (resolution === "720p") {
+                    SD = url;
+                } else if (resolution === "480p") {
+                    LD = url;
+                }
+            }
+            //创建播放器
+            var source = {
+                "HD": HD,
+                "SD": SD,
+                "LD": LD
+            };
+            createPlayer(source);
+        });
+    }
 
+    //开始播放
     function createPlayer(source) {
-        JSON.stringify({
-            "HD":"//player.alicdn.com/resource/player/qupai.mp4",
-            "SD":"//player.alicdn.com/video/editor.mp4"});
         var player = new Aliplayer({
             "id": "player-con",
-            "source": source,
-            "width": "90%",
-            "height": "90%",
+            "source": JSON.stringify(source),
+            "width": "100%",
+            "height": "700px",
             "autoplay": true,
             "isLive": false,
             "cover": "",
@@ -151,6 +187,10 @@
             console.log("The player is created");
         });
     }
+
+    //从这里开始
+    var videoId = getQueryString("v");
+    getVideoInfo(videoId);
 
 </script>
 </body>

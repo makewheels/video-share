@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class PlayUrlRequest {
-    private String videoSnowflakeId;
+    private String snowflakeId;
 }

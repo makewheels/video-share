@@ -2,6 +2,7 @@ package com.github.makewheels.videoshare.videoservice;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class PageController {
@@ -21,7 +22,7 @@ public class PageController {
     }
 
     @RequestMapping("watch")
-    public String watch() {
-        return "redirect:/watch.html";
+    public String watch(@RequestParam String v) {
+        return "forward:/watch.html?v=" + v;
     }
 }
