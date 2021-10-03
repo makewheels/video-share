@@ -1,7 +1,6 @@
 package com.github.makewheels.videoshare.fileservice;
 
-import com.github.makewheels.universaluserservice.common.bean.User;
-import com.github.makewheels.videoshare.common.bean.OssFile;
+import com.github.makewheels.videoshare.common.bean.file.OssFile;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;

@@ -1,7 +1,7 @@
 package com.github.makewheels.videoshare.videoservice.video;
 
 import com.github.makewheels.universaluserservice.common.bean.User;
-import com.github.makewheels.videoshare.common.bean.Video;
+import com.github.makewheels.videoshare.common.bean.video.Video;
 import com.github.makewheels.videoshare.common.response.Result;
 import com.github.makewheels.videoshare.videoservice.bean.createvideo.CreateVideoRequest;
 import com.github.makewheels.videoshare.videoservice.bean.createvideo.CreateVideoResponse;

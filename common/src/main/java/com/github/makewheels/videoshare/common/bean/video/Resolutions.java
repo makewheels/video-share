@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare.common.bean;
+package com.github.makewheels.videoshare.common.bean.video;
 
 public class Resolutions {
     public static final String R_1080P = "1080p";

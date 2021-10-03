@@ -1,6 +1,6 @@
 package com.github.makewheels.videoshare.transcodeservice.service;
 
-import com.github.makewheels.videoshare.common.bean.Video;
+import com.github.makewheels.videoshare.common.bean.video.Video;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;

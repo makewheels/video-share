@@ -1,6 +1,6 @@
 package com.github.makewheels.videoshare.transcodeservice;
 
-import com.github.makewheels.videoshare.common.bean.TranscodeJob;
+import com.github.makewheels.videoshare.common.bean.transcode.TranscodeJob;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

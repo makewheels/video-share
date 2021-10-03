@@ -1,7 +1,7 @@
 package com.github.makewheels.videoshare.fileservice;
 
-import com.github.makewheels.videoshare.common.bean.OssFile;
-import com.github.makewheels.videoshare.common.bean.OssSignRequest;
+import com.github.makewheels.videoshare.common.bean.file.OssFile;
+import com.github.makewheels.videoshare.common.bean.file.OssSignRequest;
 import com.github.makewheels.videoshare.common.response.Result;
 import com.github.makewheels.videoshare.fileservice.bean.GetTemporaryCredentialRequest;
 import com.github.makewheels.videoshare.fileservice.bean.UploadFinishRequest;

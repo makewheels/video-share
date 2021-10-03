@@ -1,6 +1,6 @@
 package com.github.makewheels.videoshare.videoservice.video;
 
-import com.github.makewheels.videoshare.common.bean.Video;
+import com.github.makewheels.videoshare.common.bean.video.Video;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

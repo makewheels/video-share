@@ -1,6 +1,6 @@
 package com.github.makewheels.videoshare.videoservice.service;
 
-import com.github.makewheels.videoshare.common.bean.OssSignRequest;
+import com.github.makewheels.videoshare.common.bean.file.OssSignRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

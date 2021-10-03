@@ -1,9 +1,8 @@
 package com.github.makewheels.videoshare.fileservice.redis;
 
 import com.alibaba.fastjson.JSON;
-import com.github.makewheels.videoshare.common.bean.Video;
+import com.github.makewheels.videoshare.common.bean.video.Video;
 import com.github.makewheels.videoshare.common.redis.RedisService;
-import com.github.makewheels.videoshare.fileservice.redis.RedisKey;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

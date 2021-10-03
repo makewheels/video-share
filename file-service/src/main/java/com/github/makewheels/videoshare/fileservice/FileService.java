@@ -2,9 +2,9 @@ package com.github.makewheels.videoshare.fileservice;
 
 import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
-import com.github.makewheels.videoshare.common.bean.OssFile;
-import com.github.makewheels.videoshare.common.bean.OssSignRequest;
-import com.github.makewheels.videoshare.common.bean.Video;
+import com.github.makewheels.videoshare.common.bean.file.OssFile;
+import com.github.makewheels.videoshare.common.bean.file.OssSignRequest;
+import com.github.makewheels.videoshare.common.bean.video.Video;
 import com.github.makewheels.videoshare.common.response.ErrorCode;
 import com.github.makewheels.videoshare.common.response.Result;
 import com.github.makewheels.videoshare.fileservice.oss.OssService;
@@ -14,7 +14,6 @@ import com.github.makewheels.videoshare.fileservice.util.FileSnowflakeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.util.Date;

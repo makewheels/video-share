@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare.common.bean;
+package com.github.makewheels.videoshare.common.bean.video;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -9,35 +9,32 @@ import java.util.Date;
 
 @Data
 @Document
-public class OssFile {
+public class Video {
     @Id
     private String mongoId;
     @Indexed
     private Long snowflakeId;
     @Indexed
-    private String status;
+    private String videoId;
     @Indexed
     private String userMongoId;
+
+    private String title;
+    private String description;
+
     @Indexed
-    private String videoMongoId;
+    private String visibility;
 
-    private String originalFilename;
+    private Boolean hasExpireTime;
+    private Date expireTime;
 
-    private String provider;
-
-    private String region;
-    private String bucket;
-
-    private String key;
-    private String accessUrl;
-    private String baseUrl;
-
-    private Long size;
-    private String md5;
     @Indexed
     private Date createTime;
     @Indexed
     private Date uploadFinishTime;
     @Indexed
-    private String uploadToken;
+    private String originalFileMongoId;
+    private String uploadPath;
+    @Indexed
+    private String status;
 }
