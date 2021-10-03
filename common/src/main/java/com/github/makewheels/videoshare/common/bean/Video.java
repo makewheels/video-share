@@ -24,6 +24,8 @@ public class Video {
 
     @Indexed
     private String visibility;
+
+    private Boolean hasExpireTime;
     private Date expireTime;
 
     @Indexed

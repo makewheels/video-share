@@ -22,6 +22,9 @@ public enum ErrorCode {
 
     //视频相关
     UPLOAD_TOKEN_EXPIRED(2001, "上传令牌过期"),
+    VIDEO_ID_NOT_EXIST(2002, "视频ID不存在"),
+    PERMISSION_CHECK_FAIL(2003, "权限校验失败，需要登录上传者账号观看"),
+    VIDEO_EXPIRED(2004, "视频已过期"),
 
     RUBBISH(1415926535, "我是垃圾，请忽略我");
 

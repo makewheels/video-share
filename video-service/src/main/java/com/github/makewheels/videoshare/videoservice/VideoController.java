@@ -5,6 +5,8 @@ import com.github.makewheels.videoshare.common.bean.Video;
 import com.github.makewheels.videoshare.common.response.Result;
 import com.github.makewheels.videoshare.videoservice.bean.CreateVideoRequest;
 import com.github.makewheels.videoshare.videoservice.bean.CreateVideoResponse;
+import com.github.makewheels.videoshare.videoservice.bean.VideoInfoRequest;
+import com.github.makewheels.videoshare.videoservice.bean.VideoInfoResponse;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,14 +21,21 @@ public class VideoController {
     private VideoService videoService;
 
     @PostMapping("createVideo")
-    private Result<CreateVideoResponse> createVideo(
+    public Result<CreateVideoResponse> createVideo(
             HttpServletRequest request, @RequestBody CreateVideoRequest createVideoRequest) {
         User user = userService.getByLoginToken(request.getHeader("loginToken"));
         return videoService.createVideo(user, createVideoRequest);
     }
 
     @PostMapping("getVideoByMongoId")
-    private Video getVideoByMongoId(@RequestParam String videoMongoId) {
+    public Video getVideoByMongoId(@RequestParam String videoMongoId) {
         return videoService.getVideoByMongoId(videoMongoId);
+    }
+
+    @PostMapping("getVideoInfoByVideoId")
+    public Result<VideoInfoResponse> getVideoInfoByVideoId(
+            HttpServletRequest request, @RequestBody VideoInfoRequest videoInfoRequest) {
+        User user = userService.getByLoginToken(request.getHeader("loginToken"));
+        return videoService.getVideoInfoByVideoId(user, videoInfoRequest.getVideoId());
     }
 }

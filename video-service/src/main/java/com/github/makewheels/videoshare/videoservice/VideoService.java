@@ -3,14 +3,19 @@ package com.github.makewheels.videoshare.videoservice;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.github.makewheels.universaluserservice.common.bean.User;
+import com.github.makewheels.videoshare.common.response.ErrorCode;
 import com.github.makewheels.videoshare.common.response.Result;
 import com.github.makewheels.videoshare.videoservice.bean.CreateVideoRequest;
 import com.github.makewheels.videoshare.videoservice.bean.CreateVideoResponse;
 import com.github.makewheels.videoshare.common.bean.Video;
+import com.github.makewheels.videoshare.videoservice.bean.VideoInfoResponse;
 import com.github.makewheels.videoshare.videoservice.redis.VideoRedisService;
-import com.github.makewheels.videoshare.videoservice.util.VideoConstants;
+import com.github.makewheels.videoshare.videoservice.util.VideoStatus;
 import com.github.makewheels.videoshare.videoservice.util.VideoSnowflakeUtil;
+import com.github.makewheels.videoshare.videoservice.util.VideoVisibility;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -46,9 +51,12 @@ public class VideoService {
             Date date = new Date();
             date.setTime(System.currentTimeMillis() + request.getExpireTimeLength());
             video.setExpireTime(date);
+            video.setHasExpireTime(true);
+        } else {
+            video.setHasExpireTime(false);
         }
 
-        video.setStatus(VideoConstants.STATUS_CREATE);
+        video.setStatus(VideoStatus.STATUS_CREATE);
 
         //上传路径
         String uploadPath = "video/" + user.getSnowflakeId() + "/" + video.getSnowflakeId() + "/upload/"
@@ -70,5 +78,32 @@ public class VideoService {
     public Video getVideoByMongoId(String videoMongoId) {
         //TODO 应该改成从缓存获取
         return videoRepository.getVideoByMongoId(videoMongoId);
+    }
+
+    public Result<VideoInfoResponse> getVideoInfoByVideoId(User user, String videoId) {
+        Video video = videoRepository.getVideoByVideoId(videoId);
+        //如果视频不存在
+        if (video == null) {
+            return Result.error(ErrorCode.VIDEO_ID_NOT_EXIST);
+        }
+        //检查权限
+        String visibility = video.getVisibility();
+        //如果是私有的
+        if (visibility.equals(VideoVisibility.PRIVATE)) {
+            //如果这个视频不是他的
+            if (!user.getMongoId().equals(video.getUserMongoId())) {
+                return Result.error(ErrorCode.PERMISSION_CHECK_FAIL);
+            }
+        }
+        //检查过期时间
+        if (BooleanUtils.isTrue(video.getHasExpireTime())) {
+            if (System.currentTimeMillis() > video.getExpireTime().getTime()) {
+                return Result.error(ErrorCode.VIDEO_EXPIRED);
+            }
+        }
+        VideoInfoResponse videoInfo = new VideoInfoResponse();
+        BeanUtils.copyProperties(video, videoInfo);
+        videoInfo.setSnowflakeId(video.getSnowflakeId() + "");
+        return Result.ok(videoInfo);
     }
 }
