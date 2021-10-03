@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient("video-service")
 public interface VideoService {
 
-    @PostMapping("getVideoByMongoId")
+    @PostMapping("video/getVideoByMongoId")
     Video getVideoByMongoId(@RequestParam String videoMongoId);
 
 }

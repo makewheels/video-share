@@ -27,12 +27,12 @@ public class FileController {
         return fileService.uploadFinish(uploadFinishRequest.getFileSnowflakeId());
     }
 
-    @PostMapping
+    @PostMapping("getOssFileByMongoId")
     public OssFile getOssFileByMongoId(@RequestParam String mongoId) {
         return fileService.getOssFileByMongoId(mongoId);
     }
 
-    @PostMapping
+    @PostMapping("getOssFileByVideoMongoId")
     public OssFile getOssFileByVideoMongoId(@RequestParam String videoMongoId) {
         return fileService.getOssFileByVideoMongoId(videoMongoId);
     }

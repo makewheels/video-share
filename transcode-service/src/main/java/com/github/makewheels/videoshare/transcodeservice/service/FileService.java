@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient("file-service")
 public interface FileService {
-    @PostMapping
+    @PostMapping("file/getOssFileByMongoId")
     OssFile getOssFileByMongoId(@RequestParam String mongoId);
 
-    @PostMapping
+    @PostMapping("file/getOssFileByVideoMongoId")
     OssFile getOssFileByVideoMongoId(@RequestParam String videoMongoId);
 }

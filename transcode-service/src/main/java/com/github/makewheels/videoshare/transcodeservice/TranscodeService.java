@@ -1,22 +1,34 @@
 package com.github.makewheels.videoshare.transcodeservice;
 
+import cn.hutool.core.util.IdUtil;
+import com.alibaba.fastjson.JSON;
 import com.aliyun.mts20140618.models.SubmitJobsResponse;
 import com.aliyun.mts20140618.models.SubmitJobsResponseBody;
+import com.github.makewheels.universaluserservice.common.bean.User;
 import com.github.makewheels.videoshare.common.bean.OssFile;
-import com.github.makewheels.videoshare.common.bean.Resolution;
-import com.github.makewheels.videoshare.transcodeservice.bean.TemplateConstants;
+import com.github.makewheels.videoshare.common.bean.Resolutions;
+import com.github.makewheels.videoshare.common.bean.Video;
 import com.github.makewheels.videoshare.transcodeservice.bean.TranscodeJob;
+import com.github.makewheels.videoshare.transcodeservice.bean.TranscodeTask;
 import com.github.makewheels.videoshare.transcodeservice.service.FileService;
+import com.github.makewheels.videoshare.transcodeservice.service.UserService;
 import com.github.makewheels.videoshare.transcodeservice.service.VideoService;
+import com.github.makewheels.videoshare.transcodeservice.util.TemplateIds;
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 
 @Service
+@Slf4j
 public class TranscodeService {
+    @Resource
+    private UserService userService;
     @Resource
     private VideoService videoService;
     @Resource
@@ -30,12 +42,12 @@ public class TranscodeService {
         String resolution = transcodeJob.getTargetResolution();
         String templateId = null;
         //找到分辨率对应模板
-        if (resolution.equals(Resolution.R_1080P)) {
-            templateId = TemplateConstants.TEMPLATE_ID_FLV_1080P;
-        } else if (resolution.equals(Resolution.R_720P)) {
-            templateId = TemplateConstants.TEMPLATE_ID_FLV_720P;
-        } else if (resolution.equals(Resolution.R_480P)) {
-            templateId = TemplateConstants.TEMPLATE_ID_FLV_480P;
+        if (resolution.equals(Resolutions.R_1080P)) {
+            templateId = TemplateIds.TEMPLATE_ID_FLV_1080P;
+        } else if (resolution.equals(Resolutions.R_720P)) {
+            templateId = TemplateIds.TEMPLATE_ID_FLV_720P;
+        } else if (resolution.equals(Resolutions.R_480P)) {
+            templateId = TemplateIds.TEMPLATE_ID_FLV_480P;
         }
         //提交转码作业
         SubmitJobsResponse response = aliyunMpsService.submitTranscodeJob(transcodeJob.getFromObject(),
@@ -47,14 +59,21 @@ public class TranscodeService {
         transcodeJob.setJobId(job.getJobId());
     }
 
-    private String getToObject(String userMongoId, String videoMongoId, String resolution) {
-        return "video/" + userMongoId + "/transcode/" + resolution + "/" + videoMongoId + ".flv";
+    private String getToObject(String userId, String videoId, String resolution) {
+        return "video/" + userId + "/" + videoId + "/transcode/" + resolution + "/" + videoId + ".flv";
     }
 
     public void transcodeVideo(String videoMongoId) {
+        log.info("新建转码任务: videoMongoId = " + videoMongoId);
         OssFile file = fileService.getOssFileByVideoMongoId(videoMongoId);
         String fromObject = file.getKey();
         String userMongoId = file.getUserMongoId();
+
+        User user = userService.getUserByMongoId(userMongoId);
+        long userSnowflakeId = user.getSnowflakeId();
+
+        Video video = videoService.getVideoByMongoId(videoMongoId);
+        long videoSnowflakeId = video.getSnowflakeId();
 
         //提交三种转码任务
         TranscodeJob job_1080p = new TranscodeJob();
@@ -63,22 +82,37 @@ public class TranscodeService {
         job_1080p.setStatus("create");
 
         job_1080p.setCreateTime(new Date());
-        job_1080p.setTargetResolution(Resolution.R_1080P);
-        job_1080p.setToObject(getToObject(userMongoId, videoMongoId, Resolution.R_1080P));
+        job_1080p.setTargetResolution(Resolutions.R_1080P);
+        job_1080p.setToObject(getToObject(userSnowflakeId + "", videoSnowflakeId + "",
+                Resolutions.R_1080P));
 
         TranscodeJob job_720p = new TranscodeJob();
         BeanUtils.copyProperties(job_1080p, job_720p);
-        job_720p.setTargetResolution(Resolution.R_720P);
-        job_720p.setToObject(getToObject(userMongoId, videoMongoId, Resolution.R_720P));
+        job_720p.setTargetResolution(Resolutions.R_720P);
+        job_720p.setToObject(getToObject(userSnowflakeId + "", videoSnowflakeId + "",
+                Resolutions.R_720P));
 
         TranscodeJob job_480p = new TranscodeJob();
         BeanUtils.copyProperties(job_1080p, job_480p);
-        job_480p.setTargetResolution(Resolution.R_480P);
-        job_480p.setToObject(getToObject(userMongoId, videoMongoId, Resolution.R_480P));
+        job_480p.setTargetResolution(Resolutions.R_480P);
+        job_480p.setToObject(getToObject(userSnowflakeId + "", videoSnowflakeId + "",
+                Resolutions.R_480P));
 
         submitJob(job_1080p);
         submitJob(job_720p);
         submitJob(job_480p);
+
+        TranscodeTask transcodeTask = new TranscodeTask();
+        String taskId = IdUtil.simpleUUID();
+        transcodeTask.setTaskId(taskId);
+        transcodeTask.setCreateTime(new Date());
+        transcodeTask.setUserMongoId(userMongoId);
+        transcodeTask.setVideoMongoId(videoMongoId);
+        mongoTemplate.save(transcodeTask);
+
+        job_1080p.setTaskId(taskId);
+        job_720p.setTaskId(taskId);
+        job_480p.setTaskId(taskId);
 
         //保存转码任务到数据库
         mongoTemplate.save(job_1080p);
@@ -86,7 +120,12 @@ public class TranscodeService {
         mongoTemplate.save(job_480p);
 
         //下面要开始最难的地方了，线程池轮询查询转码结果
+        addQueryTask(transcodeTask, Lists.newArrayList(job_1080p, job_720p, job_480p));
+    }
 
+    private void addQueryTask(TranscodeTask transcodeTask, ArrayList<TranscodeJob> transcodeJobs) {
+        log.info("添加任务: " + JSON.toJSONString(transcodeTask)
+                + " " + JSON.toJSONString(transcodeJobs));
     }
 
 }

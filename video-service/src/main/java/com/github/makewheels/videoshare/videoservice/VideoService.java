@@ -43,8 +43,8 @@ public class VideoService {
         video.setStatus(VideoConstants.STATUS_CREATE);
 
         //上传路径
-        String uploadPath = "video/" + user.getSnowflakeId() + "/upload/" + video.getSnowflakeId()
-                + "." + FilenameUtils.getExtension(request.getOriginalFilename());
+        String uploadPath = "video/" + user.getSnowflakeId() + "/" + video.getSnowflakeId() + "/upload/"
+                + video.getSnowflakeId() + "." + FilenameUtils.getExtension(request.getOriginalFilename());
         video.setUploadPath(uploadPath);
 
         //保存视频到数据库
