@@ -43,7 +43,7 @@ public class VideoService {
         video.setStatus(VideoConstants.STATUS_CREATE);
 
         //上传路径
-        String uploadPath = "upload/video/" + user.getSnowflakeId() + "/" + video.getSnowflakeId()
+        String uploadPath = "video/" + user.getSnowflakeId() + "/upload/" + video.getSnowflakeId()
                 + "." + FilenameUtils.getExtension(request.getOriginalFilename());
         video.setUploadPath(uploadPath);
 
@@ -57,5 +57,10 @@ public class VideoService {
         response.setUploadToken(uploadToken);
         response.setUploadPath(uploadPath);
         return Result.ok(response);
+    }
+
+    public Video getVideoByMongoId(String videoMongoId) {
+        //TODO 应该改成从缓存获取
+        return videoRepository.getVideoByMongoId(videoMongoId);
     }
 }

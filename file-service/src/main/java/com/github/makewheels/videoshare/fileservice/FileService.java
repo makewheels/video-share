@@ -1,6 +1,5 @@
 package com.github.makewheels.videoshare.fileservice;
 
-import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.github.makewheels.videoshare.common.bean.OssFile;
@@ -12,7 +11,6 @@ import com.github.makewheels.videoshare.fileservice.redis.FileRedisService;
 import com.github.makewheels.videoshare.fileservice.upload.Credential;
 import com.github.makewheels.videoshare.fileservice.util.FileSnowflakeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -81,8 +79,17 @@ public class FileService {
         ossFile.setStatus("upload-finish");
         mongoTemplate.save(ossFile);
         //发送消息队列，上传完成
+        String mongoId = ossFile.getMongoId();
 
         //返回前端
         return Result.ok();
+    }
+
+    public OssFile getOssFileByMongoId(String mongoId) {
+        return fileRepository.findByMongoId(mongoId);
+    }
+
+    public OssFile getOssFileByVideoMongoId(String videoMongoId) {
+        return fileRepository.findOne("videoMongoId", videoMongoId);
     }
 }

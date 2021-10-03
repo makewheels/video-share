@@ -30,4 +30,8 @@ public class FileRepository {
     public OssFile findBySnowflakeId(long snowflakeId) {
         return findOne("snowflakeId", snowflakeId);
     }
+
+    public OssFile findByMongoId(String mongoId) {
+        return mongoTemplate.findById(mongoId, OssFile.class);
+    }
 }

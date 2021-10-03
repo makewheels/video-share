@@ -1,6 +1,7 @@
 package com.github.makewheels.videoshare.videoservice;
 
 import com.github.makewheels.universaluserservice.common.bean.User;
+import com.github.makewheels.videoshare.common.bean.Video;
 import com.github.makewheels.videoshare.common.response.Result;
 import com.github.makewheels.videoshare.videoservice.bean.CreateVideoRequest;
 import com.github.makewheels.videoshare.videoservice.bean.CreateVideoResponse;
@@ -22,5 +23,10 @@ public class VideoController {
             HttpServletRequest request, @RequestBody CreateVideoRequest createVideoRequest) {
         User user = userService.getByLoginToken(request.getHeader("loginToken"));
         return videoService.createVideo(user, createVideoRequest);
+    }
+
+    @PostMapping("getVideoByMongoId")
+    private Video getVideoByMongoId(@RequestParam String videoMongoId) {
+        return videoService.getVideoByMongoId(videoMongoId);
     }
 }

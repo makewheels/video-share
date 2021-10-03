@@ -1,5 +1,6 @@
 package com.github.makewheels.videoshare.fileservice;
 
+import com.github.makewheels.videoshare.common.bean.OssFile;
 import com.github.makewheels.videoshare.common.response.Result;
 import com.github.makewheels.videoshare.fileservice.bean.GetTemporaryCredentialRequest;
 import com.github.makewheels.videoshare.fileservice.bean.UploadFinishRequest;
@@ -26,4 +27,13 @@ public class FileController {
         return fileService.uploadFinish(uploadFinishRequest.getFileSnowflakeId());
     }
 
+    @PostMapping
+    public OssFile getOssFileByMongoId(@RequestParam String mongoId) {
+        return fileService.getOssFileByMongoId(mongoId);
+    }
+
+    @PostMapping
+    public OssFile getOssFileByVideoMongoId(@RequestParam String videoMongoId) {
+        return fileService.getOssFileByVideoMongoId(videoMongoId);
+    }
 }
