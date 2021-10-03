@@ -3,6 +3,7 @@ package com.github.makewheels.videoshare.fileservice;
 import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.github.makewheels.videoshare.common.bean.OssFile;
+import com.github.makewheels.videoshare.common.bean.OssSignRequest;
 import com.github.makewheels.videoshare.common.bean.Video;
 import com.github.makewheels.videoshare.common.response.ErrorCode;
 import com.github.makewheels.videoshare.common.response.Result;
@@ -13,9 +14,13 @@ import com.github.makewheels.videoshare.fileservice.util.FileSnowflakeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -91,5 +96,15 @@ public class FileService {
 
     public OssFile getOssFileByVideoMongoId(String videoMongoId) {
         return fileRepository.findOne("videoMongoId", videoMongoId);
+    }
+
+    public Map<String, String> getSignedUrl(List<OssSignRequest> ossSignRequests) {
+        Map<String, String> map = new HashMap<>(ossSignRequests.size());
+        for (OssSignRequest ossSignRequest : ossSignRequests) {
+            String key = ossSignRequest.getKey();
+            String url = ossService.getSignedUrl(key, ossSignRequest.getTime());
+            map.put(key, url);
+        }
+        return map;
     }
 }

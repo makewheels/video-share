@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare.videoservice;
+package com.github.makewheels.videoshare.videoservice.video;
 
 import com.github.makewheels.videoshare.common.bean.Video;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -24,5 +24,9 @@ public class VideoRepository {
 
     public Video getVideoByVideoId(String videoId) {
         return findOne("videoId", videoId);
+    }
+
+    public Video getVideoBySnowflakeId(long snowflakeId) {
+        return findOne("snowflakeId", snowflakeId);
     }
 }

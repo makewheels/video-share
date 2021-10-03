@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare.videoservice.bean;
+package com.github.makewheels.videoshare.videoservice.bean.videoinfo;
 
 import lombok.Data;
 import org.springframework.data.mongodb.core.index.Indexed;

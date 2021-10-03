@@ -1,6 +1,7 @@
 package com.github.makewheels.videoshare.fileservice;
 
 import com.github.makewheels.videoshare.common.bean.OssFile;
+import com.github.makewheels.videoshare.common.bean.OssSignRequest;
 import com.github.makewheels.videoshare.common.response.Result;
 import com.github.makewheels.videoshare.fileservice.bean.GetTemporaryCredentialRequest;
 import com.github.makewheels.videoshare.fileservice.bean.UploadFinishRequest;
@@ -8,6 +9,8 @@ import com.github.makewheels.videoshare.fileservice.upload.Credential;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("file")
@@ -35,5 +38,10 @@ public class FileController {
     @PostMapping("getOssFileByVideoMongoId")
     public OssFile getOssFileByVideoMongoId(@RequestParam String videoMongoId) {
         return fileService.getOssFileByVideoMongoId(videoMongoId);
+    }
+
+    @PostMapping("getSignedUrl")
+    public Map<String, String> getSignedUrl(@RequestBody List<OssSignRequest> ossSignRequests) {
+        return fileService.getSignedUrl(ossSignRequests);
     }
 }

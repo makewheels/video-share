@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare.transcodeservice.bean;
+package com.github.makewheels.videoshare.common.bean;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

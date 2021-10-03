@@ -5,11 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.aliyun.mts20140618.models.SubmitJobsResponse;
 import com.aliyun.mts20140618.models.SubmitJobsResponseBody;
 import com.github.makewheels.universaluserservice.common.bean.User;
-import com.github.makewheels.videoshare.common.bean.OssFile;
-import com.github.makewheels.videoshare.common.bean.Resolutions;
-import com.github.makewheels.videoshare.common.bean.Video;
-import com.github.makewheels.videoshare.transcodeservice.bean.TranscodeJob;
-import com.github.makewheels.videoshare.transcodeservice.bean.TranscodeTask;
+import com.github.makewheels.videoshare.common.bean.*;
 import com.github.makewheels.videoshare.transcodeservice.service.FileService;
 import com.github.makewheels.videoshare.transcodeservice.service.UserService;
 import com.github.makewheels.videoshare.transcodeservice.service.VideoService;
@@ -18,11 +14,14 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -123,9 +122,23 @@ public class TranscodeService {
         addQueryTask(transcodeTask, Lists.newArrayList(job_1080p, job_720p, job_480p));
     }
 
+    /**
+     * 添加阿里云转码查询任务
+     *
+     * @param transcodeTask
+     * @param transcodeJobs
+     */
     private void addQueryTask(TranscodeTask transcodeTask, ArrayList<TranscodeJob> transcodeJobs) {
         log.info("添加任务: " + JSON.toJSONString(transcodeTask)
                 + " " + JSON.toJSONString(transcodeJobs));
+    }
+
+    /**
+     * 根据videoMongoId获取转码jobs
+     */
+    public List<TranscodeJob> getTranscodeJobsByVideoMongoId(String videoMongoId) {
+        Query query = Query.query(Criteria.where("videoMongoId").is(videoMongoId));
+        return mongoTemplate.find(query, TranscodeJob.class);
     }
 
 }

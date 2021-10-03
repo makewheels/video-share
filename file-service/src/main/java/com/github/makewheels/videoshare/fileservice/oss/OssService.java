@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @Slf4j
 public class OssService {
@@ -121,5 +123,17 @@ public class OssService {
      */
     public OSSObject getFileByKey(String key) {
         return getOssClient().getObject(bucket, key);
+    }
+
+    /**
+     * 签名对象
+     *
+     * @param key
+     * @param time
+     * @return
+     */
+    public String getSignedUrl(String key, long time) {
+        return getOssClient().generatePresignedUrl(
+                bucket, key, new Date(System.currentTimeMillis() + time)).toString();
     }
 }

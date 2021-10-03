@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare.videoservice.bean;
+package com.github.makewheels.videoshare.videoservice.bean.createvideo;
 
 import lombok.Data;
 

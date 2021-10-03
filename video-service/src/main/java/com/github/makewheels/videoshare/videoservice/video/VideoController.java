@@ -1,16 +1,20 @@
-package com.github.makewheels.videoshare.videoservice;
+package com.github.makewheels.videoshare.videoservice.video;
 
 import com.github.makewheels.universaluserservice.common.bean.User;
 import com.github.makewheels.videoshare.common.bean.Video;
 import com.github.makewheels.videoshare.common.response.Result;
-import com.github.makewheels.videoshare.videoservice.bean.CreateVideoRequest;
-import com.github.makewheels.videoshare.videoservice.bean.CreateVideoResponse;
-import com.github.makewheels.videoshare.videoservice.bean.VideoInfoRequest;
-import com.github.makewheels.videoshare.videoservice.bean.VideoInfoResponse;
+import com.github.makewheels.videoshare.videoservice.bean.createvideo.CreateVideoRequest;
+import com.github.makewheels.videoshare.videoservice.bean.createvideo.CreateVideoResponse;
+import com.github.makewheels.videoshare.videoservice.bean.playurl.PlayUrl;
+import com.github.makewheels.videoshare.videoservice.bean.playurl.PlayUrlRequest;
+import com.github.makewheels.videoshare.videoservice.bean.videoinfo.VideoInfoRequest;
+import com.github.makewheels.videoshare.videoservice.bean.videoinfo.VideoInfoResponse;
+import com.github.makewheels.videoshare.videoservice.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("video")
@@ -37,5 +41,12 @@ public class VideoController {
             HttpServletRequest request, @RequestBody VideoInfoRequest videoInfoRequest) {
         User user = userService.getByLoginToken(request.getHeader("loginToken"));
         return videoService.getVideoInfoByVideoId(user, videoInfoRequest.getVideoId());
+    }
+
+    @PostMapping("getPlayUrl")
+    public Result<List<PlayUrl>> getPlayUrl(
+            HttpServletRequest request, @RequestBody PlayUrlRequest playUrlRequest) {
+        User user = userService.getByLoginToken(request.getHeader("loginToken"));
+        return videoService.getPlayUrl(user, Long.parseLong(playUrlRequest.getVideoSnowflakeId()));
     }
 }

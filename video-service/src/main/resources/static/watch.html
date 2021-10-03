@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>watch.html</title>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+
+    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>-->
+    <!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>-->
+
+    <!--layui-->
+    <link rel="stylesheet" href="//unpkg.com/layui@2.6.8/dist/css/layui.css">
+    <script src="//unpkg.com/layui@2.6.8/dist/layui.js"></script>
+
+    <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!--阿里云播放器-->
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1,
+         maximum-scale=1, minimum-scale=1, user-scalable=no"/>
+    <link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.9.12/skins/default/aliplayer-min.css"/>
+    <script type="text/javascript" charset="utf-8"
+            src="https://g.alicdn.com/de/prismplayer/2.9.12/aliplayer-min.js"></script>
+
+    <!--引入的自己的common.js-->
+    <script src="js/common.js"></script>
+</head>
+
+<body>
+<div class="prism-player" id="player-con"></div>
+<script>
+    function getQueryString(name) {
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        let r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return decodeURIComponent(r[2]);
+        }
+        return null;
+    }
+
+    function getVideoInfo(videoId) {
+        axios.post(APIURL + "/video-service/video/getVideoInfoByVideoId",
+            {videoId: videoId})
+            .then(function (response) {
+                var data = response.data;
+                if (data.code !== 0) {
+                    //登陆失败
+                    alert(data.message);
+                    return null;
+                } else {
+                    return data.data;
+                }
+            });
+    }
+
+    var videoId = getQueryString("v");
+    var videoInfo = getVideoInfo(videoId);
+
+    function createPlayer(source) {
+        JSON.stringify({
+            "HD":"//player.alicdn.com/resource/player/qupai.mp4",
+            "SD":"//player.alicdn.com/video/editor.mp4"});
+        var player = new Aliplayer({
+            "id": "player-con",
+            "source": source,
+            "width": "90%",
+            "height": "90%",
+            "autoplay": true,
+            "isLive": false,
+            "cover": "",
+            "rePlay": false,
+            "playsinline": true,
+            "preload": true,
+            "controlBarVisibility": "hover",
+            "useH5Prism": true,
+            "skinLayout": [
+                {
+                    "name": "bigPlayButton",
+                    "align": "blabs",
+                    "x": 30,
+                    "y": 80
+                },
+                {
+                    "name": "H5Loading",
+                    "align": "cc"
+                },
+                {
+                    "name": "errorDisplay",
+                    "align": "tlabs",
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "name": "infoDisplay"
+                },
+                {
+                    "name": "tooltip",
+                    "align": "blabs",
+                    "x": 0,
+                    "y": 56
+                },
+                {
+                    "name": "thumbnail"
+                },
+                {
+                    "name": "controlBar",
+                    "align": "blabs",
+                    "x": 0,
+                    "y": 0,
+                    "children": [
+                        {
+                            "name": "progress",
+                            "align": "blabs",
+                            "x": 0,
+                            "y": 44
+                        },
+                        {
+                            "name": "playButton",
+                            "align": "tl",
+                            "x": 15,
+                            "y": 12
+                        },
+                        {
+                            "name": "timeDisplay",
+                            "align": "tl",
+                            "x": 10,
+                            "y": 7
+                        },
+                        {
+                            "name": "fullScreenButton",
+                            "align": "tr",
+                            "x": 10,
+                            "y": 12
+                        },
+                        {
+                            "name": "setting",
+                            "align": "tr",
+                            "x": 15,
+                            "y": 12
+                        },
+                        {
+                            "name": "volume",
+                            "align": "tr",
+                            "x": 5,
+                            "y": 10
+                        }
+                    ]
+                }
+            ]
+        }, function (player) {
+            console.log("The player is created");
+        });
+    }
+
+</script>
+</body>
+</html>

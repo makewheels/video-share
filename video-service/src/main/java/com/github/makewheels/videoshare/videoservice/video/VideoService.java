@@ -1,15 +1,21 @@
-package com.github.makewheels.videoshare.videoservice;
+package com.github.makewheels.videoshare.videoservice.video;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.github.makewheels.universaluserservice.common.bean.User;
+import com.github.makewheels.videoshare.common.bean.OssSignRequest;
+import com.github.makewheels.videoshare.common.bean.TranscodeJob;
 import com.github.makewheels.videoshare.common.response.ErrorCode;
 import com.github.makewheels.videoshare.common.response.Result;
-import com.github.makewheels.videoshare.videoservice.bean.CreateVideoRequest;
-import com.github.makewheels.videoshare.videoservice.bean.CreateVideoResponse;
+import com.github.makewheels.videoshare.videoservice.bean.createvideo.CreateVideoRequest;
+import com.github.makewheels.videoshare.videoservice.bean.createvideo.CreateVideoResponse;
 import com.github.makewheels.videoshare.common.bean.Video;
-import com.github.makewheels.videoshare.videoservice.bean.VideoInfoResponse;
+import com.github.makewheels.videoshare.videoservice.bean.playurl.PlayUrl;
+import com.github.makewheels.videoshare.videoservice.bean.playurl.PlayUrlRequest;
+import com.github.makewheels.videoshare.videoservice.bean.videoinfo.VideoInfoResponse;
 import com.github.makewheels.videoshare.videoservice.redis.VideoRedisService;
+import com.github.makewheels.videoshare.videoservice.service.FileService;
+import com.github.makewheels.videoshare.videoservice.service.TranscodeService;
 import com.github.makewheels.videoshare.videoservice.util.VideoStatus;
 import com.github.makewheels.videoshare.videoservice.util.VideoSnowflakeUtil;
 import com.github.makewheels.videoshare.videoservice.util.VideoVisibility;
@@ -20,7 +26,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class VideoService {
@@ -30,6 +39,10 @@ public class VideoService {
     private MongoTemplate mongoTemplate;
     @Resource
     private VideoRedisService videoRedisService;
+    @Resource
+    private TranscodeService transcodeService;
+    @Resource
+    private FileService fileService;
 
     /**
      * 上传前创建视频
@@ -80,11 +93,17 @@ public class VideoService {
         return videoRepository.getVideoByMongoId(videoMongoId);
     }
 
-    public Result<VideoInfoResponse> getVideoInfoByVideoId(User user, String videoId) {
-        Video video = videoRepository.getVideoByVideoId(videoId);
+    /**
+     * 检查视频
+     *
+     * @param user
+     * @param video
+     * @return
+     */
+    private ErrorCode checkVideo(User user, Video video) {
         //如果视频不存在
         if (video == null) {
-            return Result.error(ErrorCode.VIDEO_ID_NOT_EXIST);
+            return ErrorCode.VIDEO_ID_NOT_EXIST;
         }
         //检查权限
         String visibility = video.getVisibility();
@@ -92,18 +111,76 @@ public class VideoService {
         if (visibility.equals(VideoVisibility.PRIVATE)) {
             //如果这个视频不是他的
             if (!user.getMongoId().equals(video.getUserMongoId())) {
-                return Result.error(ErrorCode.PERMISSION_CHECK_FAIL);
+                return ErrorCode.PERMISSION_CHECK_FAIL;
             }
         }
         //检查过期时间
         if (BooleanUtils.isTrue(video.getHasExpireTime())) {
             if (System.currentTimeMillis() > video.getExpireTime().getTime()) {
-                return Result.error(ErrorCode.VIDEO_EXPIRED);
+                return ErrorCode.VIDEO_EXPIRED;
             }
+        }
+        //视频是否已就绪
+        if (!video.getStatus().equals(VideoStatus.STATUS_READY)) {
+            return ErrorCode.VIDEO_NOT_READY;
+        }
+        return null;
+    }
+
+    /**
+     * 根据videoId获取视频信息
+     *
+     * @param user
+     * @param videoId
+     * @return
+     */
+    public Result<VideoInfoResponse> getVideoInfoByVideoId(User user, String videoId) {
+        Video video = videoRepository.getVideoByVideoId(videoId);
+        ErrorCode errorCode = checkVideo(user, video);
+        if (errorCode != null) {
+            return Result.error(errorCode);
         }
         VideoInfoResponse videoInfo = new VideoInfoResponse();
         BeanUtils.copyProperties(video, videoInfo);
         videoInfo.setSnowflakeId(video.getSnowflakeId() + "");
         return Result.ok(videoInfo);
+    }
+
+    /**
+     * 根据雪花id获取视频播放信息
+     *
+     * @param user
+     * @param videoSnowflakeId
+     * @return
+     */
+    public Result<List<PlayUrl>> getPlayUrl(User user, long videoSnowflakeId) {
+        Video video = videoRepository.getVideoBySnowflakeId(videoSnowflakeId);
+        ErrorCode errorCode = checkVideo(user, video);
+        if (errorCode != null) {
+            return Result.error(errorCode);
+        }
+        //获取转码文件
+        List<TranscodeJob> transcodeJobs = transcodeService.getTranscodeJobsByVideoMongoId(video.getMongoId());
+
+        //获取签名地址
+        List<OssSignRequest> ossSignRequests = new ArrayList<>(transcodeJobs.size());
+        for (TranscodeJob transcodeJob : transcodeJobs) {
+            OssSignRequest ossSignRequest = new OssSignRequest();
+            ossSignRequest.setKey(transcodeJob.getToObject());
+            //TODO 应该设置为视频时长的两倍
+            ossSignRequest.setTime(2 * 60 * 60 * 1000L);
+            ossSignRequests.add(ossSignRequest);
+        }
+        Map<String, String> map = fileService.getSignedUrl(ossSignRequests);
+
+        //组装结果
+        List<PlayUrl> playUrls = new ArrayList<>(transcodeJobs.size());
+        for (TranscodeJob transcodeJob : transcodeJobs) {
+            PlayUrl playUrl = new PlayUrl();
+            playUrl.setResolution(transcodeJob.getTargetResolution());
+            playUrl.setUrl(map.get(transcodeJob.getToObject()));
+            playUrls.add(playUrl);
+        }
+        return Result.ok(playUrls);
     }
 }

@@ -25,6 +25,7 @@ public enum ErrorCode {
     VIDEO_ID_NOT_EXIST(2002, "视频ID不存在"),
     PERMISSION_CHECK_FAIL(2003, "权限校验失败，需要登录上传者账号观看"),
     VIDEO_EXPIRED(2004, "视频已过期"),
+    VIDEO_NOT_READY(2005, "视频未就绪"),
 
     RUBBISH(1415926535, "我是垃圾，请忽略我");
 

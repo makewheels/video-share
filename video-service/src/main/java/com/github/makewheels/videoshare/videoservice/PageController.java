@@ -19,4 +19,9 @@ public class PageController {
     public String uploadFinish() {
         return "redirect:/home.html";
     }
+
+    @RequestMapping("watch")
+    public String watch() {
+        return "redirect:/watch.html";
+    }
 }
