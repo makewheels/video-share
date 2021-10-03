@@ -40,6 +40,14 @@ public class VideoService {
         video.setDescription(request.getDescription());
         video.setTitle(request.getTitle());
         video.setVisibility(request.getVisibility());
+        Long expireTimeLength = request.getExpireTimeLength();
+        //设置过期时间
+        if (expireTimeLength != 0) {
+            Date date = new Date();
+            date.setTime(System.currentTimeMillis() + request.getExpireTimeLength());
+            video.setExpireTime(date);
+        }
+
         video.setStatus(VideoConstants.STATUS_CREATE);
 
         //上传路径

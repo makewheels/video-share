@@ -64,4 +64,12 @@ public class AliyunMpsService {
         return null;
     }
 
+    public static void main(String[] args) {
+        AliyunMpsService aliyunMpsService = new AliyunMpsService();
+        aliyunMpsService.submitTranscodeJob(
+                "How does a Combination Lock work-sftkP4CjjZs.mp4",
+                "How does a Combination Lock work-sftkP4CjjZs.flv",
+                "47862bc46b064469a610a5031ad3cf21"
+        );
+    }
 }

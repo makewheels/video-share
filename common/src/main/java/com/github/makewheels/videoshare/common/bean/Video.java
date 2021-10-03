@@ -21,8 +21,11 @@ public class Video {
 
     private String title;
     private String description;
+
     @Indexed
     private String visibility;
+    private Date expireTime;
+
     @Indexed
     private Date createTime;
     @Indexed

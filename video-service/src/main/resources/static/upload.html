@@ -50,6 +50,14 @@
             <input type="radio" name="visibility" value="Private" title="Private">
         </div>
     </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">有效期</label>
+        <div class="layui-input-block">
+            <input type="radio" name="expireTimeLength" value="0" title="Never" checked=""/>
+            <input type="radio" name="expireTimeLength" value="604800000" title="7 days"/>
+            <input type="radio" name="expireTimeLength" value="2592000000" title="30 days">
+        </div>
+    </div>
 </form>
 
 <button id="btn_upload" type="button" class="layui-btn">开始上传</button>
@@ -61,6 +69,7 @@
         var title = document.getElementById("input_title").value;
         var description = document.getElementById("input_description").value;
         var visibility = layui.form.val('form').visibility;
+        var expireTimeLength = layui.form.val('form').expireTimeLength;
         var file = document.getElementById('file').files[0];
         var originalFilename = file.name;
 
@@ -69,6 +78,7 @@
                 title: title,
                 description: description,
                 visibility: visibility,
+                expireTimeLength: expireTimeLength,
                 originalFilename: originalFilename
             }
         ).then(function (response) {

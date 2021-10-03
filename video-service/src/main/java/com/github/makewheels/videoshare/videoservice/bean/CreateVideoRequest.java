@@ -7,5 +7,6 @@ public class CreateVideoRequest {
     private String title;
     private String description;
     private String visibility;
+    private Long expireTimeLength;
     private String originalFilename;
 }
