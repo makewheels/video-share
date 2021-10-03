@@ -20,6 +20,7 @@
         <module>file-service</module>
         <module>transcode-service</module>
         <module>api-gateway</module>
+        <module>search-service</module>
     </modules>
 
     <properties>
