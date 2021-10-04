@@ -89,7 +89,7 @@
                     expireTime = parseDateString(each.expireTime);
                 }
                 newTr.innerHTML =
-                    '<td>' + each.videoId + '</td>' +
+                    '<td><a  target="_blank" href="' + each.watchUrl + '">' + each.videoId + '</a></td>' +
                     '<td>' + each.title + '</td>' +
                     '<td>' + each.visibility + '</td>' +
                     '<td>' + expireTime + '</td>' +

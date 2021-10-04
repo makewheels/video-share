@@ -8,6 +8,7 @@ import java.util.Date;
 public class GetVideoListResponse {
     private String videoId;
     private String snowflakeId;
+    private String watchUrl;
     private String title;
 
     private String visibility;

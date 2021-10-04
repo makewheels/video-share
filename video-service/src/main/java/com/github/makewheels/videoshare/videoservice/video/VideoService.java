@@ -20,9 +20,11 @@ import com.github.makewheels.videoshare.videoservice.service.TranscodeService;
 import com.github.makewheels.videoshare.common.bean.video.VideoStatus;
 import com.github.makewheels.videoshare.videoservice.util.VideoSnowflakeUtil;
 import com.github.makewheels.videoshare.common.bean.video.VideoVisibility;
+import lombok.Getter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -46,6 +48,10 @@ public class VideoService {
     private TranscodeService transcodeService;
     @Resource
     private FileService fileService;
+
+    @Getter
+    @Value("${domain}")
+    private String domain;
 
     /**
      * 上传前创建视频
@@ -187,6 +193,10 @@ public class VideoService {
         return Result.ok(playUrls);
     }
 
+    private String getWatchUrl(String videoId) {
+        return "http://" + getDomain() + "/watch?v=" + videoId;
+    }
+
     public Result<List<GetVideoListResponse>> getVideoList(User user, GetVideoListRequest getVideoListRequest) {
         Query query = Query.query(Criteria.where("userMongoId").is(user.getMongoId()));
         query.addCriteria(Criteria.where("status").ne(VideoStatus.CREATE));
@@ -196,6 +206,7 @@ public class VideoService {
             GetVideoListResponse videoInfo = new GetVideoListResponse();
             BeanUtils.copyProperties(video, videoInfo);
             videoInfo.setSnowflakeId(video.getSnowflakeId() + "");
+            videoInfo.setWatchUrl(getWatchUrl(video.getVideoId()));
             list.add(videoInfo);
         });
         return Result.ok(list);
