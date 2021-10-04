@@ -2,6 +2,7 @@ package com.github.makewheels.videoshare.transcodeservice;
 
 import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSON;
+import com.aliyun.mts20140618.models.QueryJobListResponse;
 import com.aliyun.mts20140618.models.SubmitJobsResponse;
 import com.aliyun.mts20140618.models.SubmitJobsResponseBody;
 import com.github.makewheels.universaluserservice.common.bean.User;
@@ -127,14 +128,13 @@ public class TranscodeService {
         return transcodeTask;
     }
 
+
     /**
      * 添加阿里云转码查询任务
-     *
-     * @param transcodeTask
-     * @param transcodeJobs
      */
     private void addQueryTask(TranscodeTask transcodeTask, ArrayList<TranscodeJob> transcodeJobs) {
         //TODO 轮询检查任务是否完成了
+
         log.info("添加任务: " + JSON.toJSONString(transcodeTask)
                 + " " + JSON.toJSONString(transcodeJobs));
     }
@@ -147,4 +147,17 @@ public class TranscodeService {
         return mongoTemplate.find(query, TranscodeJob.class);
     }
 
+    /**
+     * 当转码任务完成时
+     */
+    private void onTranscodeJobFinish(
+            String videoMongoId, String taskId, String jobId, QueryJobListResponse queryJobListResponse) {
+        //更新 transcode job
+        //发消息队列：job完成
+
+        //查数据库判断task是否都完成，如果都完成，修改 transcode task状态
+
+        //如果task都完成，还要再发一条消息队列：task完成
+
+    }
 }
