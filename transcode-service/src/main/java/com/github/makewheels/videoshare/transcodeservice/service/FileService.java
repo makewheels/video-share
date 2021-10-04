@@ -1,11 +1,13 @@
 package com.github.makewheels.videoshare.transcodeservice.service;
 
 import com.github.makewheels.videoshare.common.bean.file.OssFile;
+import com.github.makewheels.videoshare.common.bean.file.OssSignRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Map;
 
 @FeignClient("file-service")
