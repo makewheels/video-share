@@ -21,5 +21,6 @@ public class TranscodeTask {
     private String userMongoId;
 
     private Date createTime;
+    private String status;
 
 }

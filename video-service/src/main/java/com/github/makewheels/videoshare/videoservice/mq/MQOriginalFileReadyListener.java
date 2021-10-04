@@ -29,7 +29,7 @@ import javax.annotation.Resource;
         topic = Topic.TOPIC_ORIGINAL_FILE_READY,
         messageModel = MessageModel.BROADCASTING
 )
-public class MqService implements RocketMQListener<String> {
+public class MQOriginalFileReadyListener implements RocketMQListener<String> {
     @Resource
     private FileService fileService;
     @Resource

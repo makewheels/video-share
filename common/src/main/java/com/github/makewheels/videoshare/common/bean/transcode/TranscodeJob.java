@@ -29,6 +29,7 @@ public class TranscodeJob {
     private String targetResolution;
 
     private String jobId;
-    private JSONObject aliyunResponse;
+    private JSONObject jobDetail;
+
     private String status;
 }
