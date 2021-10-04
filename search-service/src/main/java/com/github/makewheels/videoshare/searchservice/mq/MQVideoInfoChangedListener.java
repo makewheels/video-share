@@ -37,7 +37,7 @@ public class MQVideoInfoChangedListener implements RocketMQListener<String> {
     @Override
     public void onMessage(String message) {
         String videoMongoId = JSON.parseObject(message, VideoMongoId.class).getVideoMongoId();
-        log.info("搜索RocketMQ消息：topic= {}, videoMongoId = {}",
+        log.info("搜索微服务收到RocketMQ消息：topic= {}, videoMongoId = {}",
                 Topic.TOPIC_VIDEO_INFO_CHANGED, videoMongoId);
         Video video = videoService.getVideoByMongoId(videoMongoId);
         EsVideo esVideo = new EsVideo();
