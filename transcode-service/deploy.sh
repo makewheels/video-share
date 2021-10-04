@@ -14,7 +14,7 @@ JAVA_OUT=${APP_HOME}/transcode-service/logs/start.log                           
 
 # 创建出相关目录
 mkdir -p ${APP_HOME}
-mkdir -p ${APP_HOME}/logs
+mkdir -p ${APP_HOME}/transcode-service/logs
 usage() {
   echo "Usage: $PROG_NAME {start|stop|restart}"
   exit 2
