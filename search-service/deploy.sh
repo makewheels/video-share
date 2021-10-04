@@ -9,8 +9,8 @@ APP_START_TIMEOUT=20                                                  # 等待�
 APP_PORT=5019                                                         # 应用端口
 HEALTH_CHECK_URL=http://java8.icu:${APP_PORT}/${APP_NAME}/healthCheck # 应用健康检查URL
 APP_HOME=/home/admin/${APP_NAME}                                      # 从package.tgz中解压出来的jar包放到这个目录下
-JAR_NAME=${APP_HOME}/target/${APP_NAME}-1.0.0.jar                     # jar包的名字
-JAVA_OUT=${APP_HOME}/logs/start.log                                   #应用的启动日志
+JAR_NAME=${APP_HOME}/search-service/target/${APP_NAME}-1.0.0.jar                     # jar包的名字
+JAVA_OUT=${APP_HOME}/search-service/logs/start.log                                   #应用的启动日志
 
 # 创建出相关目录
 mkdir -p ${APP_HOME}
