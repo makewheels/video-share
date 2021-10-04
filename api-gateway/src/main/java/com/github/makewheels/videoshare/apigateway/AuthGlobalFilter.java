@@ -37,7 +37,9 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         log.info("path = " + path);
         //放行列表
         ArrayList<String> list = Lists.newArrayList(
-                "/universal-user-service/user/login"
+                "/universal-user-service/user/login",
+                "/video-service/video/getVideoInfoByVideoId",
+                "/video-service/video/getPlayUrl"
         );
         if (StringUtils.isNotEmpty(path) && list.contains(path)) {
             return chain.filter(exchange);

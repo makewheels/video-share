@@ -40,12 +40,13 @@ public class MQOriginalFileReadyListener implements RocketMQListener<String> {
     @Override
     public void onMessage(String message) {
         String fileMongoId = JSON.parseObject(message, FileMongoId.class).getFileMongoId();
-        log.info("视频微服务监听到RocketMQ消息，开始改变视频状态, fileMongoId = " + fileMongoId);
+        log.info("视频微服务监听到RocketMQ消息：topic= {}, 开始改变视频状态, fileMongoId = {}",
+                Topic.TOPIC_ORIGINAL_FILE_READY, fileMongoId);
         OssFile file = fileService.getOssFileByMongoId(fileMongoId);
         String videoMongoId = file.getVideoMongoId();
         Video video = videoService.getVideoByMongoId(videoMongoId);
-        video.setStatus(VideoStatus.STATUS_ORIGINAL_FILE_READY);
+        video.setStatus(VideoStatus.ORIGINAL_FILE_READY);
         log.info("改变视频状态为：源文件就绪, videoMongoId = " + videoMongoId + " , " + JSON.toJSONString(video));
-        videoRepository.updateByMongoId(videoMongoId, "status", VideoStatus.STATUS_ORIGINAL_FILE_READY);
+        videoRepository.updateByMongoId(videoMongoId, "status", VideoStatus.ORIGINAL_FILE_READY);
     }
 }

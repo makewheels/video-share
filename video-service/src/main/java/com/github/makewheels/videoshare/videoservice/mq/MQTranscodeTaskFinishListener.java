@@ -1,7 +1,6 @@
 package com.github.makewheels.videoshare.videoservice.mq;
 
 import com.alibaba.fastjson.JSON;
-import com.github.makewheels.videoshare.common.bean.transcode.TranscodeStatus;
 import com.github.makewheels.videoshare.common.bean.transcode.TranscodeTask;
 import com.github.makewheels.videoshare.common.bean.video.VideoStatus;
 import com.github.makewheels.videoshare.common.mq.Group;
@@ -32,7 +31,9 @@ public class MQTranscodeTaskFinishListener implements RocketMQListener<String> {
     @Override
     public void onMessage(String message) {
         TranscodeTask transcodeTask = JSON.parseObject(message, TranscodeTask.class);
+        log.info("视频微服务监听到RocketMQ消息：topic= {}, transcodeTask = {}",
+                Topic.TOPIC_TRANSCODE_TASK_FINISHED, JSON.toJSONString(transcodeTask));
         String videoMongoId = transcodeTask.getVideoMongoId();
-        videoRepository.updateByMongoId(videoMongoId, "status", VideoStatus.STATUS_READY);
+        videoRepository.updateByMongoId(videoMongoId, "status", VideoStatus.READY);
     }
 }

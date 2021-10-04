@@ -1,9 +1,9 @@
 package com.github.makewheels.videoshare.fileservice;
 
-import cn.hutool.core.io.file.FileNameUtil;
 import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.github.makewheels.videoshare.common.bean.file.FileMongoId;
+import com.github.makewheels.videoshare.common.bean.file.FileStatus;
 import com.github.makewheels.videoshare.common.bean.file.OssFile;
 import com.github.makewheels.videoshare.common.bean.file.OssSignRequest;
 import com.github.makewheels.videoshare.common.bean.video.Video;
@@ -41,6 +41,21 @@ public class FileService {
     @Resource
     private RocketMQService rocketMQService;
 
+    public OssFile createOssFile(String key) {
+        OssFile ossFile = new OssFile();
+        ossFile.setStatus(FileStatus.CREATE);
+        ossFile.setCreateTime(new Date());
+        ossFile.setSnowflakeId(FileSnowflakeUtil.get());
+        ossFile.setBucket(ossService.getBucket());
+        ossFile.setRegion(ossService.getRegion());
+        ossFile.setKey(key);
+        ossFile.setBaseUrl(ossService.getBaseUrl());
+        ossFile.setAccessUrl(ossService.getAccessUrl(key));
+        ossFile.setExtension(FilenameUtils.getExtension(key));
+        ossFile.setProvider("aliyun-oss");
+        return ossFile;
+    }
+
     public Result<Credential> getTemporaryCredential(String uploadToken, String originalFilename) {
         Video video = fileRedisService.getVideoByUploadToken(uploadToken);
         //删掉Redis uploadToken
@@ -50,29 +65,17 @@ public class FileService {
         }
         String uploadPath = video.getUploadPath();
         //创建我本地文件
-        OssFile ossFile = new OssFile();
-        ossFile.setStatus("create");
+        OssFile ossFile = createOssFile(uploadPath);
         ossFile.setUserMongoId(video.getUserMongoId());
         ossFile.setVideoMongoId(video.getMongoId());
         ossFile.setOriginalFilename(originalFilename);
         ossFile.setOriginalBasename(FilenameUtils.getBaseName(originalFilename));
-        ossFile.setExtension(FilenameUtils.getExtension(originalFilename));
-        ossFile.setCreateTime(new Date());
         ossFile.setUploadToken(uploadToken);
-        ossFile.setProvider("aliyun-oss");
-
-        long fileSnowflakeId = FileSnowflakeUtil.get();
-        ossFile.setSnowflakeId(fileSnowflakeId);
-        ossFile.setBucket(ossService.getBucket());
-        ossFile.setRegion(ossService.getRegion());
-        ossFile.setKey(uploadPath);
-        ossFile.setBaseUrl(ossService.getBaseUrl());
-        ossFile.setAccessUrl(ossService.getAccessUrl(uploadPath));
         mongoTemplate.save(ossFile);
 
         //生成阿里云上传凭证
         Credential credential = ossService.getAliyunOssUploadCredential(uploadPath);
-        credential.setFileSnowflakeId(fileSnowflakeId + "");
+        credential.setFileSnowflakeId(ossFile.getSnowflakeId() + "");
         return Result.ok(credential);
     }
 
@@ -89,7 +92,7 @@ public class FileService {
         ossFile.setMd5(md5);
         ossFile.setSize(objectMetadata.getContentLength());
         ossFile.setUploadFinishTime(lastModified);
-        ossFile.setStatus("upload-finish");
+        ossFile.setStatus(FileStatus.READY);
         mongoTemplate.save(ossFile);
 
         //发送消息队列，上传完成

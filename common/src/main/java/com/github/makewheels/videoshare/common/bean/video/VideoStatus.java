@@ -1,8 +1,8 @@
 package com.github.makewheels.videoshare.common.bean.video;
 
 public class VideoStatus {
-    public static final String STATUS_CREATE = "create";
-    public static final String STATUS_ORIGINAL_FILE_READY = "original-file-ready";
-    public static final String STATUS_TRANSCODING = "transcoding";
-    public static final String STATUS_READY = "ready";
+    public static final String CREATE = "CREATE";
+    public static final String ORIGINAL_FILE_READY = "ORIGINAL_FILE_READY";
+    public static final String TRANSCODING = "TRANSCODING";
+    public static final String READY = "READY";
 }

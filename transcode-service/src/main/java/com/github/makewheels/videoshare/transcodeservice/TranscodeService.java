@@ -97,7 +97,7 @@ public class TranscodeService {
         job_1080p.setVideoMongoId(videoMongoId);
         job_1080p.setUserMongoId(userMongoId);
         job_1080p.setFromObject(fromObject);
-        job_1080p.setStatus(TranscodeStatus.STATUS_CREATE);
+        job_1080p.setStatus(TranscodeStatus.CREATE);
 
         job_1080p.setCreateTime(new Date());
         job_1080p.setTargetResolution(Resolutions.R_1080P);
@@ -126,7 +126,7 @@ public class TranscodeService {
         transcodeTask.setCreateTime(new Date());
         transcodeTask.setUserMongoId(userMongoId);
         transcodeTask.setVideoMongoId(videoMongoId);
-        transcodeTask.setStatus(TranscodeStatus.STATUS_CREATE);
+        transcodeTask.setStatus(TranscodeStatus.CREATE);
         mongoTemplate.save(transcodeTask);
 
         job_1080p.setTaskId(taskId);
@@ -144,8 +144,8 @@ public class TranscodeService {
     }
 
     private boolean isFinishedStatus(String jobState) {
-        return StringUtils.equalsAny(jobState, TranscodeStatus.STATUS_TRANSCODE_SUCCESS,
-                TranscodeStatus.STATUS_TRANSCODE_FAIL, TranscodeStatus.STATUS_TRANSCODE_CANCELLED);
+        return StringUtils.equalsAny(jobState, TranscodeStatus.TRANSCODE_SUCCESS,
+                TranscodeStatus.TRANSCODE_FAIL, TranscodeStatus.TRANSCODE_CANCELLED);
     }
 
     /**
@@ -231,7 +231,7 @@ public class TranscodeService {
         //如果task都完成
         //更新数据库
         transcodeTaskRepository.updateByMongoId(transcodeTask.getMongoId(), "status",
-                TranscodeStatus.STATUS_FINISH);
+                TranscodeStatus.FINISH);
         if (jobAllFinished) {
             //发消息队列：task完成
             rocketMQService.send(Topic.TOPIC_TRANSCODE_TASK_FINISHED, transcodeTask);

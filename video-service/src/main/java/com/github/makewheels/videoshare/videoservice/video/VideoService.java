@@ -72,10 +72,10 @@ public class VideoService {
             video.setHasExpireTime(false);
         }
 
-        video.setStatus(VideoStatus.STATUS_CREATE);
+        video.setStatus(VideoStatus.CREATE);
 
         //上传路径
-        String uploadPath = "video/" + user.getSnowflakeId() + "/" + video.getSnowflakeId() + "/upload/"
+        String uploadPath = "video/" + user.getSnowflakeId() + "/" + video.getSnowflakeId() + "/original/"
                 + video.getSnowflakeId() + "." + FilenameUtils.getExtension(request.getOriginalFilename());
         video.setUploadPath(uploadPath);
 
@@ -124,7 +124,7 @@ public class VideoService {
             }
         }
         //视频是否已就绪
-        if (!video.getStatus().equals(VideoStatus.STATUS_READY)) {
+        if (!video.getStatus().equals(VideoStatus.READY)) {
             return ErrorCode.VIDEO_NOT_READY;
         }
         return null;
@@ -189,7 +189,7 @@ public class VideoService {
 
     public Result<List<GetVideoListResponse>> getVideoList(User user, GetVideoListRequest getVideoListRequest) {
         Query query = Query.query(Criteria.where("userMongoId").is(user.getMongoId()));
-        query.addCriteria(Criteria.where("status").ne(VideoStatus.STATUS_CREATE));
+        query.addCriteria(Criteria.where("status").ne(VideoStatus.CREATE));
         List<Video> videos = mongoTemplate.find(query, Video.class);
         List<GetVideoListResponse> list = new ArrayList<>(videos.size());
         videos.forEach(video -> {
