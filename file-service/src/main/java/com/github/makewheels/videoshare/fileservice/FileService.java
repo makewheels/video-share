@@ -1,5 +1,6 @@
 package com.github.makewheels.videoshare.fileservice;
 
+import cn.hutool.core.io.file.FileNameUtil;
 import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.github.makewheels.videoshare.common.bean.file.FileMongoId;
@@ -15,6 +16,7 @@ import com.github.makewheels.videoshare.fileservice.redis.FileRedisService;
 import com.github.makewheels.videoshare.fileservice.upload.Credential;
 import com.github.makewheels.videoshare.fileservice.util.FileSnowflakeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -53,12 +55,13 @@ public class FileService {
         ossFile.setUserMongoId(video.getUserMongoId());
         ossFile.setVideoMongoId(video.getMongoId());
         ossFile.setOriginalFilename(originalFilename);
+        ossFile.setOriginalBasename(FilenameUtils.getBaseName(originalFilename));
+        ossFile.setExtension(FilenameUtils.getExtension(originalFilename));
         ossFile.setCreateTime(new Date());
         ossFile.setUploadToken(uploadToken);
         ossFile.setProvider("aliyun-oss");
 
         long fileSnowflakeId = FileSnowflakeUtil.get();
-
         ossFile.setSnowflakeId(fileSnowflakeId);
         ossFile.setBucket(ossService.getBucket());
         ossFile.setRegion(ossService.getRegion());
@@ -66,6 +69,7 @@ public class FileService {
         ossFile.setBaseUrl(ossService.getBaseUrl());
         ossFile.setAccessUrl(ossService.getAccessUrl(uploadPath));
         mongoTemplate.save(ossFile);
+
         //生成阿里云上传凭证
         Credential credential = ossService.getAliyunOssUploadCredential(uploadPath);
         credential.setFileSnowflakeId(fileSnowflakeId + "");
@@ -89,9 +93,7 @@ public class FileService {
         mongoTemplate.save(ossFile);
 
         //发送消息队列，上传完成
-        FileMongoId fileMongoId = new FileMongoId();
-        fileMongoId.setFileMongoId(ossFile.getMongoId());
-        rocketMQService.send(Topic.TOPIC_ORIGINAL_FILE_READY, fileMongoId);
+        rocketMQService.send(Topic.TOPIC_ORIGINAL_FILE_READY, new FileMongoId(ossFile.getMongoId()));
 
         //返回前端
         return Result.ok();

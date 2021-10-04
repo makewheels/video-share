@@ -22,6 +22,8 @@ public class OssFile {
     private String videoMongoId;
 
     private String originalFilename;
+    private String originalBasename;
+    private String extension;
 
     private String provider;
 

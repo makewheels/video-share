@@ -4,9 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.github.makewheels.videoshare.common.bean.file.FileMongoId;
 import com.github.makewheels.videoshare.common.bean.file.OssFile;
 import com.github.makewheels.videoshare.common.bean.video.Video;
+import com.github.makewheels.videoshare.common.bean.video.VideoStatus;
+import com.github.makewheels.videoshare.common.mq.Group;
 import com.github.makewheels.videoshare.common.mq.Topic;
 import com.github.makewheels.videoshare.videoservice.service.FileService;
-import com.github.makewheels.videoshare.common.bean.video.VideoStatus;
 import com.github.makewheels.videoshare.videoservice.video.VideoRepository;
 import com.github.makewheels.videoshare.videoservice.video.VideoService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ import javax.annotation.Resource;
 @Service
 @Slf4j
 @RocketMQMessageListener(
-        consumerGroup = "group_default",
+        consumerGroup = Group.GROUP_DEFAULT,
         topic = Topic.TOPIC_ORIGINAL_FILE_READY,
         messageModel = MessageModel.BROADCASTING
 )
@@ -43,8 +44,8 @@ public class MqService implements RocketMQListener<String> {
         OssFile file = fileService.getOssFileByMongoId(fileMongoId);
         String videoMongoId = file.getVideoMongoId();
         Video video = videoService.getVideoByMongoId(videoMongoId);
-        log.info("改变视频状态为：源文件就绪, videoMongoId = " + videoMongoId + " , " + JSON.toJSONString(video));
         video.setStatus(VideoStatus.STATUS_ORIGINAL_FILE_READY);
+        log.info("改变视频状态为：源文件就绪, videoMongoId = " + videoMongoId + " , " + JSON.toJSONString(video));
         videoRepository.updateByMongoId(videoMongoId, "status", VideoStatus.STATUS_ORIGINAL_FILE_READY);
     }
 }

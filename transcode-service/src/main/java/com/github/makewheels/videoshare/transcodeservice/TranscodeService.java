@@ -134,6 +134,7 @@ public class TranscodeService {
      * @param transcodeJobs
      */
     private void addQueryTask(TranscodeTask transcodeTask, ArrayList<TranscodeJob> transcodeJobs) {
+        //TODO 轮询检查任务是否完成了
         log.info("添加任务: " + JSON.toJSONString(transcodeTask)
                 + " " + JSON.toJSONString(transcodeJobs));
     }
