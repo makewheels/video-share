@@ -183,4 +183,17 @@
         </dependencies>
     </dependencyManagement>
 
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <name>阿里云 deploy 私库 releases</name>
+            <url>https://packages.aliyun.com/maven/repository/2054234-release-28TbnN/</url>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <name>阿里云 deploy 私库 snapshots</name>
+            <url>https://packages.aliyun.com/maven/repository/2054234-snapshot-ui58zk/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>
