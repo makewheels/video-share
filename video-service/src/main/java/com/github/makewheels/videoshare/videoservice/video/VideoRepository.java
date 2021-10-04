@@ -1,9 +1,12 @@
 package com.github.makewheels.videoshare.videoservice.video;
 
+import com.github.makewheels.videoshare.common.bean.file.OssFile;
 import com.github.makewheels.videoshare.common.bean.video.Video;
+import com.mongodb.client.result.UpdateResult;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -34,5 +37,11 @@ public class VideoRepository {
 
     public Video getVideoBySnowflakeId(long snowflakeId) {
         return findOne("snowflakeId", snowflakeId);
+    }
+
+    public UpdateResult updateByMongoId(String mongoId, String key, Object value) {
+        return mongoTemplate.updateFirst(
+                Query.query(Criteria.where("mongoId").is(mongoId)),
+                Update.update(key, value), Video.class);
     }
 }

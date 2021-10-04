@@ -66,7 +66,7 @@ public class TranscodeService {
         return "video/" + userId + "/" + videoId + "/transcode/" + resolution + "/" + videoId + ".flv";
     }
 
-    public void transcodeVideo(String videoMongoId) {
+    public TranscodeTask transcodeVideo(String videoMongoId) {
         log.info("新建转码任务: videoMongoId = " + videoMongoId);
         OssFile file = fileService.getOssFileByVideoMongoId(videoMongoId);
         String fromObject = file.getKey();
@@ -124,6 +124,7 @@ public class TranscodeService {
 
         //下面要开始最难的地方了，线程池轮询查询转码结果
         addQueryTask(transcodeTask, Lists.newArrayList(job_1080p, job_720p, job_480p));
+        return transcodeTask;
     }
 
     /**
