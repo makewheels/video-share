@@ -17,13 +17,15 @@ import com.github.makewheels.videoshare.videoservice.bean.videoinfo.VideoInfoRes
 import com.github.makewheels.videoshare.videoservice.redis.VideoRedisService;
 import com.github.makewheels.videoshare.videoservice.service.FileService;
 import com.github.makewheels.videoshare.videoservice.service.TranscodeService;
-import com.github.makewheels.videoshare.videoservice.util.VideoStatus;
+import com.github.makewheels.videoshare.common.bean.video.VideoStatus;
 import com.github.makewheels.videoshare.videoservice.util.VideoSnowflakeUtil;
-import com.github.makewheels.videoshare.videoservice.util.VideoVisibility;
+import com.github.makewheels.videoshare.common.bean.video.VideoVisibility;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -186,7 +188,9 @@ public class VideoService {
     }
 
     public Result<List<GetVideoListResponse>> getVideoList(User user, GetVideoListRequest getVideoListRequest) {
-        List<Video> videos = videoRepository.find("userMongoId", user.getMongoId());
+        Query query = Query.query(Criteria.where("userMongoId").is(user.getMongoId()));
+        query.addCriteria(Criteria.where("status").ne(VideoStatus.STATUS_CREATE));
+        List<Video> videos = mongoTemplate.find(query, Video.class);
         List<GetVideoListResponse> list = new ArrayList<>(videos.size());
         videos.forEach(video -> {
             GetVideoListResponse videoInfo = new GetVideoListResponse();

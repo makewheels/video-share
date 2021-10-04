@@ -2,11 +2,14 @@ package com.github.makewheels.videoshare.fileservice;
 
 import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
+import com.github.makewheels.videoshare.common.bean.file.FileMongoId;
 import com.github.makewheels.videoshare.common.bean.file.OssFile;
 import com.github.makewheels.videoshare.common.bean.file.OssSignRequest;
 import com.github.makewheels.videoshare.common.bean.video.Video;
+import com.github.makewheels.videoshare.common.mq.Topic;
 import com.github.makewheels.videoshare.common.response.ErrorCode;
 import com.github.makewheels.videoshare.common.response.Result;
+import com.github.makewheels.videoshare.fileservice.mq.RocketMQService;
 import com.github.makewheels.videoshare.fileservice.oss.OssService;
 import com.github.makewheels.videoshare.fileservice.redis.FileRedisService;
 import com.github.makewheels.videoshare.fileservice.upload.Credential;
@@ -33,6 +36,8 @@ public class FileService {
     private MongoTemplate mongoTemplate;
     @Resource
     private OssService ossService;
+    @Resource
+    private RocketMQService rocketMQService;
 
     public Result<Credential> getTemporaryCredential(String uploadToken, String originalFilename) {
         Video video = fileRedisService.getVideoByUploadToken(uploadToken);
@@ -82,8 +87,11 @@ public class FileService {
         ossFile.setUploadFinishTime(lastModified);
         ossFile.setStatus("upload-finish");
         mongoTemplate.save(ossFile);
+
         //发送消息队列，上传完成
-        String mongoId = ossFile.getMongoId();
+        FileMongoId fileMongoId = new FileMongoId();
+        fileMongoId.setFileMongoId(ossFile.getMongoId());
+        rocketMQService.send(Topic.TOPIC_ORIGINAL_FILE_READY, fileMongoId);
 
         //返回前端
         return Result.ok();

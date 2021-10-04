@@ -1,4 +1,4 @@
-package com.github.makewheels.videoshare.videoservice.util;
+package com.github.makewheels.videoshare.common.bean.video;
 
 public class VideoVisibility {
     public static final String PUBLIC = "Public";

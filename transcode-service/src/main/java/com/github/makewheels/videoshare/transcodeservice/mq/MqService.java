@@ -3,6 +3,7 @@ package com.github.makewheels.videoshare.transcodeservice.mq;
 import com.alibaba.fastjson.JSON;
 import com.github.makewheels.videoshare.common.bean.file.FileMongoId;
 import com.github.makewheels.videoshare.common.bean.file.OssFile;
+import com.github.makewheels.videoshare.common.mq.Topic;
 import com.github.makewheels.videoshare.transcodeservice.TranscodeService;
 import com.github.makewheels.videoshare.transcodeservice.service.FileService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +20,11 @@ import javax.annotation.Resource;
  */
 @Service
 @Slf4j
-@RocketMQMessageListener(consumerGroup = "group_default",
-        topic = "upload_finish", messageModel = MessageModel.BROADCASTING)
+@RocketMQMessageListener(
+        consumerGroup = "group_default",
+        topic = Topic.TOPIC_ORIGINAL_FILE_READY,
+        messageModel = MessageModel.BROADCASTING
+)
 public class MqService implements RocketMQListener<String> {
     @Resource
     private TranscodeService transcodeService;
