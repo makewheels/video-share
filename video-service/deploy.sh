@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # 修改APP_NAME为云效上的应用名
-APP_NAME=app
+APP_NAME=${PIPELINE_NAME}
 
 PROG_NAME=$0
 ACTION=$1
-APP_START_TIMEOUT=20                                               # 等待应用启动的时间
-APP_PORT=443                                                       # 应用端口
-HEALTH_CHECK_URL=https://www.itube.work:${APP_PORT}/test           # 应用健康检查URL
-APP_HOME=/home/admin/${APP_NAME}                                   # 从package.tgz中解压出来的jar包放到这个目录下
-JAR_NAME=${APP_HOME}/target/video-os-and-server-0.0.1-SNAPSHOT.jar # jar包的名字
-JAVA_OUT=${APP_HOME}/logs/start.log                                #应用的启动日志
+APP_START_TIMEOUT=20                                                  # 等待应用启动的时间
+APP_PORT=80                                                           # 应用端口
+HEALTH_CHECK_URL=http://java8.icu:${APP_PORT}/${APP_NAME}/healthCheck # 应用健康检查URL
+APP_HOME=/home/admin/${APP_NAME}                                      # 从package.tgz中解压出来的jar包放到这个目录下
+JAR_NAME=${APP_HOME}/target/${APP_NAME}-1.0.0.jar                     # jar包的名字
+JAVA_OUT=${APP_HOME}/logs/start.log                                   #应用的启动日志
 
 # 创建出相关目录
 mkdir -p ${APP_HOME}
@@ -47,7 +47,7 @@ health_check() {
 }
 start_application() {
   echo "starting java process"
-  nohup java -jar -Dspring.profiles.active=product ${JAR_NAME} >${JAVA_OUT} 2>&1 &
+  nohup java -jar -Dspring.profiles.active=product ${JAR_NAME} >> ${JAVA_OUT} 2>&1 &
   echo "started java process"
 }
 
