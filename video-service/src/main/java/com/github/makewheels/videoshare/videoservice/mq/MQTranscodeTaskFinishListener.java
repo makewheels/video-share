@@ -2,6 +2,7 @@ package com.github.makewheels.videoshare.videoservice.mq;
 
 import com.alibaba.fastjson.JSON;
 import com.github.makewheels.videoshare.common.bean.transcode.TranscodeTask;
+import com.github.makewheels.videoshare.common.bean.video.VideoMongoId;
 import com.github.makewheels.videoshare.common.bean.video.VideoStatus;
 import com.github.makewheels.videoshare.common.mq.Group;
 import com.github.makewheels.videoshare.common.mq.Topic;
@@ -27,6 +28,8 @@ import javax.annotation.Resource;
 public class MQTranscodeTaskFinishListener implements RocketMQListener<String> {
     @Resource
     private VideoRepository videoRepository;
+    @Resource
+    private RocketMQService rocketMQService;
 
     @Override
     public void onMessage(String message) {
@@ -35,5 +38,7 @@ public class MQTranscodeTaskFinishListener implements RocketMQListener<String> {
                 Topic.TOPIC_TRANSCODE_TASK_FINISHED, JSON.toJSONString(transcodeTask));
         String videoMongoId = transcodeTask.getVideoMongoId();
         videoRepository.updateByMongoId(videoMongoId, "status", VideoStatus.READY);
+        //再发一条消息，通知搜索服务更新
+        rocketMQService.send(Topic.TOPIC_VIDEO_INFO_CHANGED, new VideoMongoId(videoMongoId));
     }
 }

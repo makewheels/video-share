@@ -8,4 +8,5 @@ public class Topic {
 
     public static final String TOPIC_TRANSCODE_JOB_STATUS_CHANGED = "TOPIC_TRANSCODE_JOB_STATUS_CHANGED";
     public static final String TOPIC_TRANSCODE_TASK_FINISHED = "TOPIC_TRANSCODE_TASK_FINISHED";
+    public static final String TOPIC_VIDEO_INFO_CHANGED = "TOPIC_VIDEO_INFO_CHANGED";
 }
