@@ -77,7 +77,7 @@ public class TranscodeService {
     }
 
     private String getToObject(String userId, String videoId, String resolution) {
-        return "video/" + userId + "/" + videoId + "/transcode/" + resolution + "/" + videoId + ".flv";
+        return "video/" + userId + "/" + videoId + "/transcode/" + resolution + "/" + videoId;
     }
 
     public TranscodeTask transcodeVideo(String videoMongoId) {

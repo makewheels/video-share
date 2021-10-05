@@ -175,9 +175,9 @@ public class VideoService {
         List<OssSignRequest> ossSignRequests = new ArrayList<>(transcodeJobs.size());
         for (TranscodeJob transcodeJob : transcodeJobs) {
             OssSignRequest ossSignRequest = new OssSignRequest();
-            ossSignRequest.setKey(transcodeJob.getToObject());
+            ossSignRequest.setKey(transcodeJob.getToObject() + ".m3u8");
             //TODO 应该设置为视频时长的两倍
-            ossSignRequest.setTime(2 * 60 * 60 * 1000L);
+            ossSignRequest.setTime(3 * 60 * 60 * 1000L);
             ossSignRequests.add(ossSignRequest);
         }
         Map<String, String> map = fileService.getSignedUrl(ossSignRequests);
@@ -187,7 +187,7 @@ public class VideoService {
         for (TranscodeJob transcodeJob : transcodeJobs) {
             PlayUrl playUrl = new PlayUrl();
             playUrl.setResolution(transcodeJob.getTargetResolution());
-            playUrl.setUrl(map.get(transcodeJob.getToObject()));
+            playUrl.setUrl(map.get(transcodeJob.getToObject() + ".m3u8"));
             playUrls.add(playUrl);
         }
         return Result.ok(playUrls);

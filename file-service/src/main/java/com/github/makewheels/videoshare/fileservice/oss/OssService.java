@@ -133,7 +133,11 @@ public class OssService {
      * @return
      */
     public String getSignedUrl(String key, long time) {
-        return getOssClient().generatePresignedUrl(
+        String url = getOssClient().generatePresignedUrl(
                 bucket, key, new Date(System.currentTimeMillis() + time)).toString();
+        if (url.startsWith("http://")) {
+            return url.replaceFirst("http://", "https://");
+        }
+        return url;
     }
 }
