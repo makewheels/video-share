@@ -14,3 +14,4 @@ sh /home/admin/${PIPELINE_NAME}/search-service/deploy.sh restart
 
 chmod a+x /home/admin/${PIPELINE_NAME}/api-gateway/deploy.sh
 sh /home/admin/${PIPELINE_NAME}/api-gateway/deploy.sh restart
+
