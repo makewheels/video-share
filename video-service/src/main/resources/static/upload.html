@@ -61,8 +61,14 @@
 </form>
 
 <button id="btn_upload" type="button" class="layui-btn">开始上传</button>
+<b>
+    <span id="text_progress" style="color: blue;margin-left: 20px;font-size: 30px"></span>
+</b>
 
 <script>
+    //进度显示
+    var text_progress = document.getElementById("text_progress");
+
     //创建视频
     function createVideo() {
         //拿到表单中的参数
@@ -120,17 +126,29 @@
 
     //上传阿里云对象存储
     async function putObject(region, accessKeyId, accessKeySecret, stsToken, bucket, path, fileSnowflakeId) {
-        const data = document.getElementById('file').files[0];
+        const file = document.getElementById('file').files[0];
         const client = new OSS({
             region: region,
             accessKeyId: accessKeyId,
             accessKeySecret: accessKeySecret,
             stsToken: stsToken,
-            bucket: bucket
+            bucket: bucket,
+            secure: true
         });
-        const result = await client.put(path, data);
-        console.log(JSON.stringify(result));
+
+        //普通上传
+        // const result = await client.put(path, file);
+
+        //分片上传
+        const result = await client.multipartUpload(path, file, {
+            partSize: 512 * 1024,
+            progress: function (p, checkpoint) {
+                var percent = p * 100;
+                text_progress.innerText = percent.toFixed(2) + " %";
+            }
+        });
         // {"name":"upload/video/1443616374344781824/1444172191220764672.jpg","url":"http://video-share-bucket.oss-cn-beijing.aliyuncs.com/upload/video/1443616374344781824/1444172191220764672.jpg","res":{"status":200,"statusCode":200,"headers":{"content-length":"0"},"size":0,"aborted":false,"rt":149,"keepAliveSocket":false,"data":{"type":"Buffer","data":[]},"requestUrls":["http://video-share-bucket.oss-cn-beijing.aliyuncs.com/upload/video/1443616374344781824/1444172191220764672.jpg"],"timing":null,"remoteAddress":"","remotePort":""}}
+
         if (result.res.status === 200) {
             onUploadFinish(fileSnowflakeId);
         }

@@ -13,3 +13,7 @@ nohup java -jar -Dspring.profiles.active=product \
 nohup java -jar -Dspring.profiles.active=product \
 /home/admin/video-share/video-service/target/video-service-1.0.0.jar \
 >> /home/admin/video-share/video-service/logs/start.log 2>&1 &
+
+nohup java -jar -Dspring.profiles.active=product \
+/home/admin/video-share/api-gateway/target/api-gateway-1.0.0.jar \
+>> /home/admin/video-share/api-gateway/logs/start.log 2>&1 &
