@@ -9,5 +9,5 @@
 
 FROM maven:3.6.3-jdk-8
 ADD "target/video-service-1.0.0.jar" "/app.jar"
-EXPOSE 5007
+EXPOSE 80
 CMD ["java","-jar","-Dspring.profiles.active=product","/app.jar"]
