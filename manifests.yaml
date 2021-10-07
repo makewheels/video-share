@@ -6,6 +6,10 @@ spec:
     matchLabels:
       app: nginx
   template:
+    metadata:
+      annotations:
+        k8s.aliyun.com/eci-use-specs: ecs.t6-c2m1.large
+        k8s.aliyun.com/eci-spot-strategy: "SpotAsPriceGo"
     spec:
       containers:
         - name: video-share_video-service
