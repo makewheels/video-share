@@ -183,6 +183,13 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
+    </dependencies>
+
     <distributionManagement>
         <repository>
             <id>rdc-releases</id>
