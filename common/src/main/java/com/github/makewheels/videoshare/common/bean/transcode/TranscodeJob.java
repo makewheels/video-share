@@ -2,6 +2,7 @@ package com.github.makewheels.videoshare.common.bean.transcode;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
+import net.bramp.ffmpeg.progress.Progress;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -33,5 +34,6 @@ public class TranscodeJob {
 
     private String status;
 
-    private Double progress;
+    private Progress progress;
+    private Double percentage;
 }
