@@ -19,7 +19,7 @@ spec:
                 cpu: "250m"
                 memory: "512Mi"
             ports:
-              containerPort: 6379
+              - containerPort: 6379
 
           - name: mongo
             image: mongo
@@ -28,7 +28,7 @@ spec:
                 cpu: "1000m"
                 memory: "2Gi"
             ports:
-              containerPort: 27017
+              - containerPort: 27017
 
           - name: elasticsearch
             image: elasticsearch
@@ -47,10 +47,10 @@ spec:
                 cpu: "500m"
                 memory: "1Gi"
             ports:
-              containerPort: 8848
+              - containerPort: 8848
             env:
               - name: MODE
-              - value: standalone
+                value: standalone
 
           - name: video-share_api-gateway
             image: registry.cn-beijing.aliyuncs.com/b4/video-share_api-gateway:${DATETIME}-${BUILD_NUMBER}
@@ -96,3 +96,17 @@ spec:
               limits:
                 cpu: "500m"
                 memory: "1Gi"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service
+spec:
+  selector:
+    app: service
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
