@@ -32,4 +32,6 @@ public class TranscodeJob {
     private JSONObject jobDetail;
 
     private String status;
+
+    private Double progress;
 }
