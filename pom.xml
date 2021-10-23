@@ -21,6 +21,7 @@
         <module>transcode-service</module>
         <module>api-gateway</module>
         <module>search-service</module>
+        <module>ffmpeg-service</module>
     </modules>
 
     <properties>
