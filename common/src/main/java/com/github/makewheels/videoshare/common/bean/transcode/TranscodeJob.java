@@ -29,8 +29,9 @@ public class TranscodeJob {
 
     private String targetResolution;
 
-    private String jobId;
-    private JSONObject jobDetail;
+    private String ffmpegJobId;
+    private String aliyunJobId;
+    private JSONObject aliyunJobDetail;
 
     private String status;
 

@@ -73,7 +73,7 @@ public class TranscodeService {
                 = response.getBody().getJobResultList().getJobResult().get(0).getJob();
         //设置状态和jobId
         transcodeJob.setStatus(job.getState());
-        transcodeJob.setJobId(job.getJobId());
+        transcodeJob.setAliyunJobId(job.getJobId());
     }
 
     private String getToObject(String userId, String videoId, String resolution) {
@@ -156,8 +156,8 @@ public class TranscodeService {
         log.info("添加阿里云转码查询任务: transcodeTask = " + JSON.toJSONString(transcodeTask)
                 + " , transcodeJobs = " + JSON.toJSONString(transcodeJobs));
         Map<String, TranscodeJob> map = transcodeJobs.stream().collect(
-                Collectors.toMap(TranscodeJob::getJobId, transcodeJob -> transcodeJob));
-        List<String> jobIds = transcodeJobs.stream().map(TranscodeJob::getJobId).collect(Collectors.toList());
+                Collectors.toMap(TranscodeJob::getAliyunJobId, transcodeJob -> transcodeJob));
+        List<String> jobIds = transcodeJobs.stream().map(TranscodeJob::getAliyunJobId).collect(Collectors.toList());
         long startTime = System.currentTimeMillis();
         do {
             try {
