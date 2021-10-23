@@ -140,4 +140,26 @@ public class OssService {
         }
         return url;
     }
+
+    /**
+     * 签名内网对象
+     *
+     * @param key
+     * @param time
+     * @return
+     */
+    public String getInternalSignedUrl(String key, long time) {
+        String url = getOssClient().generatePresignedUrl(
+                bucket, key, new Date(System.currentTimeMillis() + time)).toString();
+        if (url.startsWith("http://")) {
+            return url.replaceFirst("http://", "https://");
+        }
+        if (url.startsWith("https://" + bucket + "." + endpoint)) {
+            url = url.replaceFirst(
+                    "https://" + bucket + "." + endpoint,
+                    "https://" + bucket + "." + region + "-internal.aliyuncs.com"
+            );
+        }
+        return url;
+    }
 }

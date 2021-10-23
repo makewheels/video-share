@@ -119,4 +119,14 @@ public class FileService {
         }
         return map;
     }
+
+    public Map<String, String> getInternalSignedUrl(List<OssSignRequest> ossSignRequests) {
+        Map<String, String> map = new HashMap<>(ossSignRequests.size());
+        for (OssSignRequest ossSignRequest : ossSignRequests) {
+            String key = ossSignRequest.getKey();
+            String url = ossService.getInternalSignedUrl(key, ossSignRequest.getTime());
+            map.put(key, url);
+        }
+        return map;
+    }
 }

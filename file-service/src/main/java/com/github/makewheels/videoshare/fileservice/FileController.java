@@ -44,4 +44,9 @@ public class FileController {
     public Map<String, String> getSignedUrl(@RequestBody List<OssSignRequest> ossSignRequests) {
         return fileService.getSignedUrl(ossSignRequests);
     }
+
+    @PostMapping("getInternalSignedUrl")
+    public Map<String, String> getInternalSignedUrl(@RequestBody List<OssSignRequest> ossSignRequests) {
+        return fileService.getInternalSignedUrl(ossSignRequests);
+    }
 }
