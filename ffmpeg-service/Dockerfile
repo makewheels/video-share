@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-alpine
+FROM registry.cn-beijing.aliyuncs.com/b4/openjdk:8-jdk-alpine
 EXPOSE 5020
 ADD ffmpeg-release-amd64-static.tar.xz /usr/local
 
