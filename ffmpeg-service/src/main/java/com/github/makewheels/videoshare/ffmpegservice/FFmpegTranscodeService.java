@@ -1,14 +1,11 @@
 package com.github.makewheels.videoshare.ffmpegservice;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.IoUtil;
 import cn.hutool.http.HttpUtil;
 import com.github.makewheels.videoshare.common.bean.file.OssFile;
 import com.github.makewheels.videoshare.common.bean.file.OssSignRequest;
 import com.github.makewheels.videoshare.common.bean.transcode.TranscodeJob;
 import com.github.makewheels.videoshare.common.time.TimeInMillis;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +26,8 @@ public class FFmpegTranscodeService {
 
     private static final Map<String, TranscodeJob> map = new HashMap<>();
 
-    public void transcode(TranscodeJob transcodeJob, File inputFile, File outputFile) {
+    public void transcode(TranscodeJob transcodeJob) {
+        //这里还有一步，如果源文件不是mp4，先转为mp4
         map.put(transcodeJob.getFfmpegJobId(), transcodeJob);
         //创建目录
         File folder = new File(SystemUtils.getUserHome(), "/transcode/" +
@@ -54,10 +52,13 @@ public class FFmpegTranscodeService {
         Map<String, String> signedUrlMap = fileService.getgetInternalSignedUrl(ossSignRequests);
         String originalFileUrl = signedUrlMap.get(fromObject);
         //下载源文件
-        HttpUtil.downloadFile(originalFileUrl, inputFile);
+        HttpUtil.downloadFile(originalFileUrl, input);
 
         //开始转码
-        ffmpegService.transcodeToM3u8(transcodeJob, inputFile, outputFile);
+        ffmpegService.transcodeToM3u8(transcodeJob, input, output);
+
+        //获取所有文件，上传对象存储
+
     }
 
     public TranscodeJob queryTranscodeJobByFFmpegJobId(String ffmpegJobId) {

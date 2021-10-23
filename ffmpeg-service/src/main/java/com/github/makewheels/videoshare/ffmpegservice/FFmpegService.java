@@ -49,7 +49,7 @@ public class FFmpegService {
     }
 
     /**
-     * 转m3u8
+     * 转 m3u8
      *
      * @param transcodeJob
      * @param inputFile
@@ -60,6 +60,10 @@ public class FFmpegService {
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(inputFile.getAbsolutePath())
                 .addOutput(outputFile.getAbsolutePath())
+                .setAudioCodec("aac")
+                .setVideoCodec("libx264")
+                .setFormat("hls")
+                .setVideoResolution(transcodeJob.getTargetWidth(), transcodeJob.getTargetHeight())
                 .done();
 
         //获取视频信息

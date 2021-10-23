@@ -29,6 +29,8 @@ public class TranscodeJob implements Serializable {
     private String toObject;
 
     private String targetResolution;
+    private Integer targetWidth;
+    private Integer targetHeight;
 
     private String ffmpegJobId;
     private String aliyunJobId;

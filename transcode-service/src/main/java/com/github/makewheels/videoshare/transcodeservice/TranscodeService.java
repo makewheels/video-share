@@ -103,18 +103,24 @@ public class TranscodeService {
         job_1080p.setTargetResolution(Resolutions.R_1080P);
         job_1080p.setToObject(getToObject(userSnowflakeId + "", videoSnowflakeId + "",
                 Resolutions.R_1080P));
+        job_1080p.setTargetWidth(1920);
+        job_1080p.setTargetHeight(1080);
 
         TranscodeJob job_720p = new TranscodeJob();
         BeanUtils.copyProperties(job_1080p, job_720p);
         job_720p.setTargetResolution(Resolutions.R_720P);
         job_720p.setToObject(getToObject(userSnowflakeId + "", videoSnowflakeId + "",
                 Resolutions.R_720P));
+        job_720p.setTargetWidth(1280);
+        job_720p.setTargetHeight(720);
 
         TranscodeJob job_480p = new TranscodeJob();
         BeanUtils.copyProperties(job_1080p, job_480p);
         job_480p.setTargetResolution(Resolutions.R_480P);
         job_480p.setToObject(getToObject(userSnowflakeId + "", videoSnowflakeId + "",
                 Resolutions.R_480P));
+        job_480p.setTargetHeight(844);
+        job_480p.setTargetHeight(480);
 
         submitJob(job_1080p);
         submitJob(job_720p);
