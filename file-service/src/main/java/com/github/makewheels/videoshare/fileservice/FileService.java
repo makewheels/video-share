@@ -10,6 +10,7 @@ import com.github.makewheels.videoshare.common.bean.video.Video;
 import com.github.makewheels.videoshare.common.mq.Topic;
 import com.github.makewheels.videoshare.common.response.ErrorCode;
 import com.github.makewheels.videoshare.common.response.Result;
+import com.github.makewheels.videoshare.common.time.TimeInMillis;
 import com.github.makewheels.videoshare.fileservice.mq.RocketMQService;
 import com.github.makewheels.videoshare.fileservice.oss.OssService;
 import com.github.makewheels.videoshare.fileservice.redis.FileRedisService;
@@ -21,10 +22,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -114,7 +112,11 @@ public class FileService {
         Map<String, String> map = new HashMap<>(ossSignRequests.size());
         for (OssSignRequest ossSignRequest : ossSignRequests) {
             String key = ossSignRequest.getKey();
-            String url = ossService.getSignedUrl(key, ossSignRequest.getTime());
+            Long time = ossSignRequest.getTime();
+            if (time == null || time == 0) {
+                time = System.currentTimeMillis() + TimeInMillis.T_1_HOUR;
+            }
+            String url = ossService.getSignedUrl(key, time);
             map.put(key, url);
         }
         return map;
@@ -124,7 +126,11 @@ public class FileService {
         Map<String, String> map = new HashMap<>(ossSignRequests.size());
         for (OssSignRequest ossSignRequest : ossSignRequests) {
             String key = ossSignRequest.getKey();
-            String url = ossService.getInternalSignedUrl(key, ossSignRequest.getTime());
+            Long time = ossSignRequest.getTime();
+            if (time == null || time == 0) {
+                time = System.currentTimeMillis() + TimeInMillis.T_1_HOUR;
+            }
+            String url = ossService.getInternalSignedUrl(key, time);
             map.put(key, url);
         }
         return map;
