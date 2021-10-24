@@ -102,11 +102,11 @@ spec:
       annotations:
         k8s.aliyun.com/eci-spot-strategy: "SpotAsPriceGo"
     spec:
-      imagePullSecrets:
-        - name: secret-aliyun-docker-repository
+#      imagePullSecrets:
+#        - name: secret-aliyun-docker-repository
       containers:
         - name: ffmpeg-service
-          image: registry.cn-beijing.aliyuncs.com/b4/video-share_ffmpeg-service:2021-10-24-23-59-31_33
+          image: registry.cn-beijing.aliyuncs.com/b4/video-share_ffmpeg-service
           ports:
             - containerPort: 5020
 ---
