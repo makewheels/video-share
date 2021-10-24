@@ -25,6 +25,19 @@ spec:
 #              cpu: "250m"
 #              memory: "512Mi"
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-redis
+spec:
+  type: ClusterIP
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -45,10 +58,23 @@ spec:
         - name: nacos
           image: nacos/nacos-server
           ports:
-            - containerPort: 5020
+            - containerPort: 8848
           env:
             - name: MODE
               value: standalone
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-nacos
+spec:
+  type: ClusterIP
+  selector:
+    app: nacos
+  ports:
+    - port: 6379
+      targetPort: 6379
 ---
 
 apiVersion: apps/v1
@@ -69,19 +95,19 @@ spec:
     spec:
       containers:
         - name: ffmpeg-service
-          image: redis
+          image: registry.cn-beijing.aliyuncs.com/b4/video-share_ffmpeg-service
           ports:
             - containerPort: 5020
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
-  name: svc-redis
+  name: svc-ffmpeg-service
 spec:
   type: ClusterIP
   selector:
-    app: redis
+    app: ffmpeg-service
   ports:
-    - port: 6379
-      targetPort: 6379
+    - port: 5020
+      targetPort: 5020
+---
