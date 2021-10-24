@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
         "com.github.makewheels.videoshare",
         "com.github.makewheels.universaluserservice"
 })
+@SpringBootApplication
 public class FFmpegServiceApplication {
 
     public static void main(String[] args) {
