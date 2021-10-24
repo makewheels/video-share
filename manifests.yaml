@@ -32,7 +32,6 @@ spec:
   type: ClusterIP
   selector:
     app: redis
-  ClusterIP: None
   ports:
     - port: 6379
       targetPort: 6379
