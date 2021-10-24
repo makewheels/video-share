@@ -4,9 +4,11 @@ spec:
   - replicas: 1
     selector:
       matchLabels:
-        app: video-share
+        app: redis
     template:
       metadata:
+        labels:
+          app: redis
         annotations:
           #k8s.aliyun.com/eci-use-specs: ecs.t6-c2m1.large
           k8s.aliyun.com/eci-spot-strategy: "SpotAsPriceGo"
@@ -14,99 +16,23 @@ spec:
         containers:
           - name: redis
             image: redis
+            ports:
+              - containerPort: 6379
             resources:
               requests:
                 cpu: "250m"
                 memory: "512Mi"
-            ports:
-              - containerPort: 6379
-
-          - name: mongo
-            image: mongo
-            resources:
-              requests:
-                cpu: "1000m"
-                memory: "2Gi"
-            ports:
-              - containerPort: 27017
-
-          - name: elasticsearch
-            image: elasticsearch
-            resources:
-              requests:
-                cpu: "2000m"
-                memory: "4Gi"
-            ports:
-              - containerPort: 9200
-              - containerPort: 9300
-
-          - name: nacos
-            image: nacos/nacos-server
-            resources:
-              requests:
-                cpu: "500m"
-                memory: "1Gi"
-            ports:
-              - containerPort: 8848
-            env:
-              - name: MODE
-                value: standalone
-
-          - name: video-share_api-gateway
-            image: registry.cn-beijing.aliyuncs.com/b4/video-share_api-gateway
-            ports:
-              - containerPort: 5018
-            resources:
-              limits:
-                cpu: "500m"
-                memory: "1Gi"
-
-          - name: video-share_file-service
-            image: registry.cn-beijing.aliyuncs.com/b4/video-share_file-service
-            ports:
-              - containerPort: 5016
-            resources:
-              limits:
-                cpu: "500m"
-                memory: "1Gi"
-
-          - name: video-share_search-service
-            image: registry.cn-beijing.aliyuncs.com/b4/video-share_search-service
-            ports:
-              - containerPort: 5019
-            resources:
-              limits:
-                cpu: "500m"
-                memory: "1Gi"
-
-          - name: video-share_transcode-service
-            image: registry.cn-beijing.aliyuncs.com/b4/video-share_transcode-service
-            ports:
-              - containerPort: 5017
-            resources:
-              limits:
-                cpu: "500m"
-                memory: "1Gi"
-
-          - name: video-share_video-service
-            image: registry.cn-beijing.aliyuncs.com/b4/video-share_video-service
-            ports:
-              - containerPort: 80
-            resources:
-              limits:
-                cpu: "500m"
-                memory: "1Gi"
-
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: svc-redis
 spec:
+  type: ClusterIP
   selector:
-    app: service
-  type: NodePort
+    app: redis
+  ClusterIP: None
   ports:
-    - port: 80
-      targetPort: 80
+    - port: 6379
+      targetPort: 6379
