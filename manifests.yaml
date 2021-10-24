@@ -106,7 +106,7 @@ spec:
         - name: secret-aliyun-docker-repository
       containers:
         - name: ffmpeg-service
-          image: registry.cn-beijing.aliyuncs.com/b4/video-share_ffmpeg-service
+          image: registry.cn-beijing.aliyuncs.com/b4/video-share_ffmpeg-service:2021-10-24-23-59-31_33
           ports:
             - containerPort: 5020
 ---
