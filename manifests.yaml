@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 spec:
-  - replicas: 1
-    selector:
-      matchLabels:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
         app: redis
-    template:
-      metadata:
-        labels:
-          app: redis
-        annotations:
-          #k8s.aliyun.com/eci-use-specs: ecs.t6-c2m1.large
-          k8s.aliyun.com/eci-spot-strategy: "SpotAsPriceGo"
-      spec:
-        containers:
-          - name: redis
-            image: redis
-            ports:
-              - containerPort: 6379
-            resources:
-              requests:
-                cpu: "250m"
-                memory: "512Mi"
+      annotations:
+        #k8s.aliyun.com/eci-use-specs: ecs.t6-c2m1.large
+        k8s.aliyun.com/eci-spot-strategy: "SpotAsPriceGo"
+    spec:
+      containers:
+        - name: redis
+          image: redis
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
 ---
 
 apiVersion: v1
