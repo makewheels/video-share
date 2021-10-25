@@ -1,20 +1,20 @@
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: ingress
-spec:
-  rules:
-    - host: video-share.java8.icu
-      http:
-        paths:
-          - path: /
-            backend:
-              serviceName: svc-api-gateway
-              servicePort: 5018
-    - host: video-share.java8.icu
-      http:
-        paths:
-          - path: /
-            backend:
-              serviceName: svc-video-service
-              servicePort: 80
+#apiVersion: extensions/v1beta1
+#kind: Ingress
+#metadata:
+#  name: ingress
+#spec:
+#  rules:
+#    - host: video-share.java8.icu
+#      http:
+#        paths:
+#          - path: /
+#            backend:
+#              serviceName: svc-api-gateway
+#              servicePort: 5018
+#    - host: video-share.java8.icu
+#      http:
+#        paths:
+#          - path: /
+#            backend:
+#              serviceName: svc-video-service
+#              servicePort: 80
