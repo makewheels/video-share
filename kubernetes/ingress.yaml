@@ -4,14 +4,14 @@ metadata:
   name: ingress
 spec:
   rules:
-    - host: java8.icu
+    - host: video-share.java8.icu
       http:
         paths:
           - path: /
             backend:
               serviceName: svc-api-gateway
               servicePort: 5018
-    - host: java8.icu
+    - host: video-share.java8.icu
       http:
         paths:
           - path: /

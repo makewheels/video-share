@@ -4,6 +4,6 @@ axios.interceptors.request.use(function (config) {
     return config;
 });
 
-var BASEURL = "http://localhost";
-// var BASEURL = "http://java8.icu";
+// var BASEURL = "http://localhost";
+var BASEURL = "http://video-share.java8.icu";
 var APIURL = BASEURL + ":5018";
