@@ -19,7 +19,6 @@ spec:
           image: elasticsearch
           ports:
             - containerPort: 9200
-            - containerPort: 9300
           resources:
             requests:
               cpu: "2000m"
@@ -36,5 +35,3 @@ spec:
   ports:
     - port: 9200
       targetPort: 9200
-    - port: 9300
-      targetPort: 9300
