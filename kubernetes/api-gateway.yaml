@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+      annotations:
+        k8s.aliyun.com/eci-spot-strategy: "SpotAsPriceGo"
+    spec:
+      containers:
+        - name: api-gateway
+          image: registry.cn-beijing.aliyuncs.com/b4/video-share_api-gateway
+          ports:
+            - containerPort: 5018
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-api-gateway
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: api-gateway
+  ports:
+    - port: 5018
+      targetPort: 5018
