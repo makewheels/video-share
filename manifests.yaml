@@ -31,7 +31,6 @@ metadata:
   name: svc-redis
 spec:
   type: ClusterIP
-  clusterIP: None
   selector:
     app: redis
   ports:
@@ -113,6 +112,7 @@ metadata:
   name: svc-nacos
 spec:
   type: ClusterIP
+  clusterIP: None
   selector:
     app: nacos
   ports:
