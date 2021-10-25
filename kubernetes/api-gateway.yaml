@@ -20,14 +20,14 @@ spec:
           ports:
             - containerPort: 5018
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: svc-api-gateway
-spec:
-  type: ClusterIP
-  selector:
-    app: api-gateway
-  ports:
-    - port: 5018
-      targetPort: 5018
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: svc-api-gateway
+#spec:
+#  type: ClusterIP
+#  selector:
+#    app: api-gateway
+#  ports:
+#    - port: 5018
+#      targetPort: 5018
