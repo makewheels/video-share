@@ -26,7 +26,6 @@ metadata:
   name: svc-api-gateway
 spec:
   type: LoadBalancer
-  clusterIP: None
   selector:
     app: api-gateway
   ports:
