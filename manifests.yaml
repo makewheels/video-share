@@ -31,12 +31,18 @@ metadata:
   name: svc-redis
 spec:
   type: ClusterIP
+  clusterIP: None
   selector:
     app: redis
   ports:
     - port: 6379
       targetPort: 6379
 ---
+
+
+
+
+
 
 apiVersion: apps/v1
 kind: Deployment
@@ -63,19 +69,22 @@ spec:
             - name: MODE
               value: standalone
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
   name: svc-nacos
 spec:
   type: ClusterIP
+  clusterIP: None
   selector:
     app: nacos
   ports:
     - port: 6379
       targetPort: 6379
 ---
+
+
+
 
 apiVersion: apps/v1
 kind: Deployment
@@ -102,9 +111,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: svc-ffmpeg-service
+    name: svc-ffmpeg-service
 spec:
   type: ClusterIP
+  clusterIP: None
   selector:
     app: ffmpeg-service
   ports:
