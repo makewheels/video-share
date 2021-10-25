@@ -149,10 +149,11 @@ kind: Service
 metadata:
   name: svc-ffmpeg-service
 spec:
-  type: ClusterIP
   selector:
     app: ffmpeg-service
   ports:
     - port: 5020
       targetPort: 5020
 ---
+
+
