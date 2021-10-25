@@ -29,6 +29,7 @@ metadata:
   name: svc-nacos
 spec:
   type: ClusterIP
+  clusterIP: None
   selector:
     app: nacos
   ports:
