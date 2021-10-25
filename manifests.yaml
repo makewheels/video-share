@@ -31,13 +31,50 @@ metadata:
   name: svc-redis
 spec:
   type: ClusterIP
-  clusterIP: None
   selector:
     app: redis
   ports:
     - port: 6379
       targetPort: 6379
 ---
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+      annotations:
+        k8s.aliyun.com/eci-spot-strategy: "SpotAsPriceGo"
+    spec:
+      containers:
+        - name: mongo
+          image: mongo
+          ports:
+            - containerPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-mongo
+spec:
+  type: ClusterIP
+  selector:
+    app: mongo
+  ports:
+    - port: 27017
+      targetPort: 27017
+---
+
 
 
 
@@ -75,7 +112,6 @@ metadata:
   name: svc-nacos
 spec:
   type: ClusterIP
-  clusterIP: None
   selector:
     app: nacos
   ports:
@@ -111,10 +147,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: svc-ffmpeg-service
+  name: svc-ffmpeg-service
 spec:
   type: ClusterIP
-  clusterIP: None
   selector:
     app: ffmpeg-service
   ports:
