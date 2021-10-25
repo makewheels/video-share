@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rocketmq-nameserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rocketmq-nameserver
+  template:
+    metadata:
+      labels:
+        app: rocketmq-nameserver
+      annotations:
+        k8s.aliyun.com/eci-spot-strategy: "SpotAsPriceGo"
+    spec:
+      containers:
+        - name: rocketmq-nameserver
+          image: rocketmqinc/rocketmq
+          ports:
+            - containerPort: 9876
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-rocketmq-nameserver
+spec:
+  type: ClusterIP
+  selector:
+    app: rocketmq-nameserver
+  ports:
+    - port: 9876
+      targetPort: 9876
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rocketmq-broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rocketmq-broker
+  template:
+    metadata:
+      labels:
+        app: rocketmq-broker
+      annotations:
+        k8s.aliyun.com/eci-spot-strategy: "SpotAsPriceGo"
+    spec:
+      containers:
+        - name: rocketmq-broker
+          image: rocketmqinc/rocketmq
+          ports:
+            - containerPort: 9876
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-rocketmq-broker
+spec:
+  type: ClusterIP
+  selector:
+    app: ffmpeg-service
+  ports:
+    - port: 9876
+      targetPort: 9876
+
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rocketmq-console
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rocketmq-console
+  template:
+    metadata:
+      labels:
+        app: rocketmq-console
+      annotations:
+        k8s.aliyun.com/eci-spot-strategy: "SpotAsPriceGo"
+    spec:
+      containers:
+        - name: rocketmq-console
+          image: styletang/rocketmq-console-ng
+          ports:
+            - containerPort: 8080
+          env:
+            - name: JAVA_OPTS
+              value: -Drocketmq.namesrv.addr=svc-rocketmq-nameserver.default.svc.cluster.local:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-rocketmq-console
+spec:
+  type: ClusterIP
+  selector:
+    app: rocketmq-console
+  ports:
+    - port: 8080
+      targetPort: 8080
