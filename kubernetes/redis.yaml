@@ -31,7 +31,6 @@ metadata:
   name: svc-redis
 spec:
   type: ClusterIP
-  clusterIP: None
   selector:
     app: redis
   ports:
