@@ -63,7 +63,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: ffmpeg-service
+    app: rocketmq-broker
   ports:
     - port: 9876
       targetPort: 9876
@@ -94,7 +94,7 @@ spec:
             - containerPort: 8080
           env:
             - name: JAVA_OPTS
-              value: -Drocketmq.namesrv.addr=svc-rocketmq-nameserver.default.svc.cluster.local:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false
+              value: -Drocketmq.namesrv.addr=svc-rocketmq-nameserver.default.svc.cluster.local:9876
 ---
 apiVersion: v1
 kind: Service
