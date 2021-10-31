@@ -19,6 +19,7 @@ spec:
           image: rocketmqinc/rocketmq
           ports:
             - containerPort: 9876
+          command: [ "/bin/bash", "-ce", "tail -f /dev/null", "&& mqnamesrv" ]
 ---
 apiVersion: v1
 kind: Service
@@ -54,7 +55,7 @@ spec:
         - name: rocketmq-broker
           image: rocketmqinc/rocketmq
           ports:
-            - containerPort: 9876
+            - containerPort: 10909
 ---
 apiVersion: v1
 kind: Service
